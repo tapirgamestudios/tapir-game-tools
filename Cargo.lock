@@ -2372,6 +2372,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "tapir-cables"
+version = "0.1.0"
+
+[[package]]
 name = "tapir-sounds"
 version = "0.1.0"
 dependencies = [

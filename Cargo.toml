@@ -2,4 +2,8 @@
 
 resolver = "2"
 
-members = ["crates/tapir-sounds", "crates/tapir-sounds-state"]
+members = [
+    "crates/tapir-sounds",
+    "crates/tapir-sounds-state",
+    "crates/tapir-cables",
+]
