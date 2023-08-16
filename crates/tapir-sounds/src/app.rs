@@ -128,25 +128,7 @@ impl TapirSoundApp {
             return;
         };
 
-        let display_name = midi.selected_device_name();
-
-        let mut selected_device = midi.selected_device();
-        egui::ComboBox::from_id_source("midi input combobox")
-            .selected_text(display_name)
-            .width(200.0)
-            .show_ui(ui, |ui| {
-                ui.selectable_value(&mut selected_device, None, "No midi input");
-
-                for in_port in midi.devices() {
-                    let Some(port_name) = midi.device_name(&in_port) else {
-                        continue;
-                    };
-
-                    ui.selectable_value(&mut selected_device, Some(in_port), port_name);
-                }
-            });
-
-        match midi.update_selected_device(&selected_device) {
+        match widget::midi_combo_box(ui, midi) {
             Ok(()) => {}
             Err(midi::MidiError::Warning(text)) => {
                 self.toasts.warning(text);
