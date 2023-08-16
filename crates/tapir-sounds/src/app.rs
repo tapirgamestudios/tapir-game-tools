@@ -263,7 +263,7 @@ impl eframe::App for TapirSoundApp {
             let mut cable_ui = ui.child_ui(ui.max_rect(), *ui.layout());
             cable_ui.set_clip_rect(ui.min_rect());
             let cable_response = tapir_cables::cables(
-                &mut cable_ui,
+                &cable_ui,
                 self.state
                     .connections()
                     .map(|(output_block_id, (input_block_id, index))| {
