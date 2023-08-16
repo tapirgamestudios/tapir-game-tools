@@ -5,8 +5,6 @@ use std::{
 
 use eframe::egui;
 
-use crate::state;
-
 #[derive(Clone, Debug, Default)]
 pub struct CableState {
     inner: Arc<Mutex<CableStateInner>>,
@@ -74,13 +72,17 @@ impl CableState {
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct PortId {
-    pub block_id: state::Id,
+    pub block_id: tapir_sounds_state::Id,
     pub index: usize,
     pub direction: super::PortDirection,
 }
 
 impl PortId {
-    pub fn new(block_id: state::Id, index: usize, direction: super::PortDirection) -> Self {
+    pub fn new(
+        block_id: tapir_sounds_state::Id,
+        index: usize,
+        direction: super::PortDirection,
+    ) -> Self {
         Self {
             block_id,
             index,

@@ -1,7 +1,5 @@
 use eframe::egui;
 
-use crate::state;
-
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum PortDirection {
     Input,
@@ -10,7 +8,7 @@ pub enum PortDirection {
 
 pub fn port(
     ui: &mut egui::Ui,
-    block_id: state::Id,
+    block_id: tapir_sounds_state::Id,
     index: usize,
     direction: PortDirection,
 ) -> egui::Response {

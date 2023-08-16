@@ -4,19 +4,17 @@ use std::{
     thread::{self, JoinHandle},
 };
 
-use crate::state;
-
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub struct CalculationId(state::Id);
+pub struct CalculationId(crate::Id);
 
 #[derive(Clone)]
 pub struct Calculation {
-    results: Arc<HashMap<state::Id, Vec<f64>>>,
+    results: Arc<HashMap<crate::Id, Vec<f64>>>,
     id: CalculationId,
 }
 
 impl Calculation {
-    pub fn for_block(&self, block_id: state::Id) -> Option<&Vec<f64>> {
+    pub fn for_block(&self, block_id: crate::Id) -> Option<&Vec<f64>> {
         self.results.get(&block_id)
     }
 
@@ -40,7 +38,7 @@ impl Default for Calculator {
 }
 
 impl Calculator {
-    pub fn calculate(&mut self, state: &state::State) -> bool {
+    pub fn calculate(&mut self, state: &crate::State) -> bool {
         if let Some(worker) = &self.worker_thread {
             if worker.is_finished() {
                 self.worker_thread.take().unwrap().join().unwrap();
@@ -71,11 +69,11 @@ impl Calculator {
     }
 }
 
-fn calculate(state: state::State) -> Calculation {
+fn calculate(state: crate::State) -> Calculation {
     let results = state.calculate();
 
     Calculation {
         results: Arc::new(results),
-        id: CalculationId(state::Id::new()),
+        id: CalculationId(crate::Id::new()),
     }
 }

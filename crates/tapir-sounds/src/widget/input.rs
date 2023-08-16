@@ -1,16 +1,13 @@
 use eframe::egui;
 
-use crate::{
-    state::{self, Input},
-    widget,
-};
+use crate::widget;
 
 fn droppable_input(
     ui: &mut egui::Ui,
-    block_id: state::Id,
+    block_id: tapir_sounds_state::Id,
     index: usize,
-    f: impl FnOnce(&mut egui::Ui) -> Option<state::Input>,
-) -> Option<state::Input> {
+    f: impl FnOnce(&mut egui::Ui) -> Option<tapir_sounds_state::Input>,
+) -> Option<tapir_sounds_state::Input> {
     ui.horizontal(|ui| {
         widget::port(ui, block_id, index, widget::PortDirection::Input);
 
@@ -26,22 +23,22 @@ fn drop_point_gap(ui: &mut egui::Ui) {
 pub fn input(
     ui: &mut egui::Ui,
     name: &str,
-    input: &state::Input,
-    block_id: state::Id,
+    input: &tapir_sounds_state::Input,
+    block_id: tapir_sounds_state::Id,
     index: usize,
-) -> Option<state::Input> {
+) -> Option<tapir_sounds_state::Input> {
     match input {
-        state::Input::Toggle(toggled) => {
+        tapir_sounds_state::Input::Toggle(toggled) => {
             drop_point_gap(ui);
             let mut toggled = *toggled;
 
             if ui.checkbox(&mut toggled, name).changed() {
-                return Some(Input::Toggle(toggled));
+                return Some(tapir_sounds_state::Input::Toggle(toggled));
             }
 
             None
         }
-        state::Input::Frequency(frequency) => {
+        tapir_sounds_state::Input::Frequency(frequency) => {
             let mut frequency = *frequency;
 
             droppable_input(ui, block_id, index, |ui| {
@@ -55,13 +52,13 @@ pub fn input(
                     )
                     .changed()
                 {
-                    return Some(state::Input::Frequency(frequency));
+                    return Some(tapir_sounds_state::Input::Frequency(frequency));
                 }
 
                 None
             })
         }
-        state::Input::Amplitude(amplitude) => {
+        tapir_sounds_state::Input::Amplitude(amplitude) => {
             let mut amplitude = *amplitude;
 
             droppable_input(ui, block_id, index, |ui| {
@@ -74,13 +71,13 @@ pub fn input(
                     )
                     .changed()
                 {
-                    return Some(state::Input::Amplitude(amplitude));
+                    return Some(tapir_sounds_state::Input::Amplitude(amplitude));
                 }
 
                 None
             })
         }
-        state::Input::Periods(periods) => {
+        tapir_sounds_state::Input::Periods(periods) => {
             let mut periods = *periods;
 
             ui.horizontal(|ui| {
@@ -96,7 +93,7 @@ pub fn input(
                     )
                     .changed()
                 {
-                    return Some(state::Input::Periods(periods));
+                    return Some(tapir_sounds_state::Input::Periods(periods));
                 }
 
                 None

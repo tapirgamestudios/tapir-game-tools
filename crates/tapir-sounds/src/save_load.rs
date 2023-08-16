@@ -1,9 +1,7 @@
 use std::{fs, path::Path};
 
-use crate::state;
-
-pub fn save(state: &state::State, filepath: &Path) -> anyhow::Result<()> {
-    let persisted_state = state::persistance::PersistedState::new_from_state(state);
+pub fn save(state: &tapir_sounds_state::State, filepath: &Path) -> anyhow::Result<()> {
+    let persisted_state = tapir_sounds_state::persistance::PersistedState::new_from_state(state);
 
     let output = ron::ser::to_string_pretty(&persisted_state, ron::ser::PrettyConfig::default())?;
     fs::write(filepath, output)?;
@@ -11,9 +9,12 @@ pub fn save(state: &state::State, filepath: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn load(filepath: &Path, block_factory: &state::BlockFactory) -> anyhow::Result<state::State> {
+pub fn load(
+    filepath: &Path,
+    block_factory: &tapir_sounds_state::BlockFactory,
+) -> anyhow::Result<tapir_sounds_state::State> {
     let content = fs::read_to_string(filepath)?;
-    let deserialized: state::persistance::PersistedState = ron::from_str(&content)?;
+    let deserialized: tapir_sounds_state::persistance::PersistedState = ron::from_str(&content)?;
 
     Ok(deserialized.to_state(block_factory))
 }

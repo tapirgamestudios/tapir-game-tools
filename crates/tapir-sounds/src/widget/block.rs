@@ -1,9 +1,9 @@
 use eframe::egui;
 
-use crate::{state, widget};
+use crate::widget;
 
 pub struct BlockResponse {
-    pub alter_input: Vec<(usize, state::Input)>,
+    pub alter_input: Vec<(usize, tapir_sounds_state::Input)>,
     pub delete: bool,
     pub selected: bool,
     pub drag_delta: egui::Vec2,
@@ -11,7 +11,7 @@ pub struct BlockResponse {
 
 pub fn block(
     ui: &mut egui::Ui,
-    block: &state::Block,
+    block: &tapir_sounds_state::Block,
     is_selected: bool,
     display: Option<&Vec<f64>>,
 ) -> BlockResponse {
@@ -50,7 +50,7 @@ pub fn block(
     }
 }
 
-fn output(ui: &mut egui::Ui, block_id: state::Id, display: Option<&Vec<f64>>) {
+fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<&Vec<f64>>) {
     ui.horizontal(|ui| {
         egui::widgets::plot::Plot::new(egui::Id::new(block_id).with("plot"))
             .center_y_axis(true)
@@ -73,7 +73,7 @@ fn output(ui: &mut egui::Ui, block_id: state::Id, display: Option<&Vec<f64>>) {
 
 fn draggable_block<T>(
     ui: &mut egui::Ui,
-    block_id: state::Id,
+    block_id: tapir_sounds_state::Id,
     is_selected: bool,
     content: impl FnOnce(&mut egui::Ui) -> T,
 ) -> egui::InnerResponse<T> {
@@ -91,7 +91,7 @@ fn draggable_block<T>(
         .ctx()
         .memory_mut(|mem| {
             mem.data
-                .get_temp::<OuterRectMemory>(block_id.into())
+                .get_temp::<OuterRectMemory>(egui::Id::new(block_id))
                 .map(|stored| stored.0)
         })
         .unwrap_or(outer_rect_bounds);
@@ -112,7 +112,7 @@ fn draggable_block<T>(
     // save the outer rect to memory
     ui.ctx().memory_mut(|mem| {
         mem.data
-            .insert_temp(block_id.into(), OuterRectMemory(outer_rect))
+            .insert_temp(egui::Id::new(block_id), OuterRectMemory(outer_rect))
     });
 
     let bg_colour = ui.ctx().style().visuals.widgets.noninteractive.bg_fill;

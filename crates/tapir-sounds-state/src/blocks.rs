@@ -8,8 +8,6 @@ mod noise;
 
 use serde::{Deserialize, Serialize};
 
-use crate::state;
-
 use self::{
     band_pass_filter::BandPassFilter,
     cross_fade::CrossFade,
@@ -71,10 +69,10 @@ impl BlockFactory {
     }
 
     pub fn make_block(&self, name: &BlockName, pos: (f32, f32)) -> Block {
-        self.make_block_with_id(name, pos, state::Id::new())
+        self.make_block_with_id(name, pos, crate::Id::new())
     }
 
-    pub fn make_block_with_id(&self, name: &BlockName, pos: (f32, f32), id: state::Id) -> Block {
+    pub fn make_block_with_id(&self, name: &BlockName, pos: (f32, f32), id: crate::Id) -> Block {
         let block_type = self
             .creation_functions
             .get(name)
@@ -87,7 +85,7 @@ impl BlockFactory {
 #[derive(Clone)]
 pub struct Block {
     block_type: Box<dyn BlockType>,
-    id: state::Id,
+    id: crate::Id,
     x: f32,
     y: f32,
     dirty: bool,
@@ -102,7 +100,7 @@ pub enum Input {
 }
 
 impl Block {
-    pub fn new_with_id(block_type: Box<dyn BlockType>, pos: (f32, f32), id: state::Id) -> Self {
+    pub fn new_with_id(block_type: Box<dyn BlockType>, pos: (f32, f32), id: crate::Id) -> Self {
         Self {
             block_type,
             x: pos.0,
@@ -116,7 +114,7 @@ impl Block {
         self.block_type.name()
     }
 
-    pub fn id(&self) -> state::Id {
+    pub fn id(&self) -> crate::Id {
         self.id
     }
 

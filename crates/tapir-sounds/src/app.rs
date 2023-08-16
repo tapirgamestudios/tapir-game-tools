@@ -7,10 +7,9 @@ use std::time::Duration;
 use eframe::egui;
 
 use crate::audio;
-use crate::calculate;
 use crate::save_load;
-use crate::state;
 use crate::widget;
+use tapir_sounds_state::calculate;
 
 #[derive(Clone, Copy)]
 enum SaveState {
@@ -20,11 +19,11 @@ enum SaveState {
 }
 
 pub struct TapirSoundApp {
-    state: state::State,
+    state: tapir_sounds_state::State,
     calculator: calculate::Calculator,
     last_updated_audio_id: Option<calculate::CalculationId>,
 
-    block_factory: state::BlockFactory,
+    block_factory: tapir_sounds_state::BlockFactory,
 
     toasts: egui_notify::Toasts,
 
@@ -81,7 +80,7 @@ impl TapirSoundApp {
         let mut app = Self {
             state: Default::default(),
             calculator: Default::default(),
-            block_factory: state::BlockFactory::new(),
+            block_factory: tapir_sounds_state::BlockFactory::new(),
             pan: Default::default(),
             last_updated_audio_id: None,
             toasts,
@@ -399,7 +398,7 @@ impl eframe::App for TapirSoundApp {
                     if ui.button("New").clicked()
                         || ui.input(|i| i.modifiers.command && i.key_down(egui::Key::N))
                     {
-                        self.state = state::State::default();
+                        self.state = tapir_sounds_state::State::default();
                         self.file_path = None;
                         self.file_dirty = false;
                         ui.close_menu();

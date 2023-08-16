@@ -4,6 +4,7 @@ use std::collections::HashMap;
 pub struct Id(uuid::Uuid);
 
 mod blocks;
+pub mod calculate;
 pub mod persistance;
 
 pub use blocks::{Block, BlockFactory, Input};

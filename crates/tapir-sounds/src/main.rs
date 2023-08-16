@@ -7,9 +7,7 @@ use app::TapirSoundApp;
 
 mod app;
 mod audio;
-mod calculate;
 mod save_load;
-mod state;
 mod widget;
 
 fn main() -> Result<(), eframe::Error> {
