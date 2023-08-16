@@ -1,14 +1,12 @@
-use eframe::egui;
-
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum PortDirection {
     Input,
     Output,
 }
 
-pub fn port(
+pub fn port<BlockId: crate::BlockId + 'static>(
     ui: &mut egui::Ui,
-    block_id: tapir_sounds_state::Id,
+    block_id: BlockId,
     index: usize,
     direction: PortDirection,
 ) -> egui::Response {
@@ -28,7 +26,7 @@ pub fn port(
 
     let position = rect.center();
 
-    super::CableState::from_ctx(ui.ctx(), |cable_state| {
+    crate::CableState::from_ctx(ui.ctx(), |cable_state| {
         cable_state.set_port_position(&port_id, position)
     });
 
@@ -37,7 +35,7 @@ pub fn port(
             .ctx()
             .input(|i| i.pointer.button_pressed(egui::PointerButton::Primary))
     {
-        super::CableState::from_ctx(ui.ctx(), |cable_state| {
+        crate::CableState::from_ctx(ui.ctx(), |cable_state| {
             cable_state.set_in_progress_cable(&port_id)
         });
     }

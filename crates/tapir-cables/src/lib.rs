@@ -1,14 +1,17 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+#![deny(clippy::all)]
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use std::hash::Hash;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+mod cable_state;
+mod cables;
+mod port;
+
+pub use cable_state::PortId;
+pub use cables::cables;
+pub use port::{port, PortDirection};
+
+pub(crate) use cable_state::CableState;
+
+pub trait BlockId: Hash + Clone + Copy + PartialEq + Eq + Sync + Send {}
+
+impl<T> BlockId for T where T: Hash + Clone + Copy + PartialEq + Eq + Sync + Send {}

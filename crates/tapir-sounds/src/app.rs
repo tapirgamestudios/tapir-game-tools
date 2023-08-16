@@ -551,20 +551,25 @@ impl eframe::App for TapirSoundApp {
 
             let mut cable_ui = ui.child_ui(ui.max_rect(), *ui.layout());
             cable_ui.set_clip_rect(ui.min_rect());
-            let cable_response = widget::cables(
+            let cable_response = tapir_cables::cables(
                 &mut cable_ui,
                 self.state
                     .connections()
                     .map(|(output_block_id, (input_block_id, index))| {
                         (
-                            widget::PortId::new(output_block_id, 0, widget::PortDirection::Output),
-                            widget::PortId::new(
+                            tapir_cables::PortId::new(
+                                output_block_id,
+                                0,
+                                tapir_cables::PortDirection::Output,
+                            ),
+                            tapir_cables::PortId::new(
                                 input_block_id,
                                 index,
-                                widget::PortDirection::Input,
+                                tapir_cables::PortDirection::Input,
                             ),
                         )
                     }),
+                catppuccin_egui::FRAPPE.blue,
             );
             if let Some((output, input)) = cable_response.new_connection {
                 self.state

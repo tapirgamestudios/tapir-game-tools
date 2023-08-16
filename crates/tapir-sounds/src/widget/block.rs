@@ -67,7 +67,7 @@ fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<&
                 }
             });
 
-        widget::port(ui, block_id, 0, widget::PortDirection::Output)
+        tapir_cables::port(ui, block_id, 0, tapir_cables::PortDirection::Output)
     });
 }
 

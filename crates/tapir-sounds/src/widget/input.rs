@@ -1,7 +1,5 @@
 use eframe::egui;
 
-use crate::widget;
-
 fn droppable_input(
     ui: &mut egui::Ui,
     block_id: tapir_sounds_state::Id,
@@ -9,7 +7,7 @@ fn droppable_input(
     f: impl FnOnce(&mut egui::Ui) -> Option<tapir_sounds_state::Input>,
 ) -> Option<tapir_sounds_state::Input> {
     ui.horizontal(|ui| {
-        widget::port(ui, block_id, index, widget::PortDirection::Input);
+        tapir_cables::port(ui, block_id, index, tapir_cables::PortDirection::Input);
 
         f(ui)
     })

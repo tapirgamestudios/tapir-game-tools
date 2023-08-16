@@ -1,15 +1,12 @@
-use eframe::egui;
-
-use crate::widget;
-
-pub struct CableResponse {
-    pub new_connection: Option<(widget::PortId, widget::PortId)>,
+pub struct CableResponse<BlockId: crate::BlockId> {
+    pub new_connection: Option<(crate::PortId<BlockId>, crate::PortId<BlockId>)>,
 }
 
-pub fn cables(
+pub fn cables<BlockId: crate::BlockId + 'static>(
     ui: &mut egui::Ui,
-    cables: impl Iterator<Item = (widget::PortId, widget::PortId)>,
-) -> CableResponse {
+    cables: impl Iterator<Item = (crate::PortId<BlockId>, crate::PortId<BlockId>)>,
+    colour: egui::Color32,
+) -> CableResponse<BlockId> {
     ui.with_layer_id(
         egui::LayerId::new(egui::Order::Tooltip, egui::Id::new("cables")),
         |ui| {
@@ -17,11 +14,11 @@ pub fn cables(
 
             let mut new_connection = None;
 
-            let cable_stroke = egui::Stroke::new(3.0, catppuccin_egui::FRAPPE.blue);
+            let cable_stroke = egui::Stroke::new(3.0, colour);
 
             for (source, target) in cables {
                 let Some((source_pos, target_pos)) =
-                    widget::CableState::from_ctx(ui.ctx(), |state| {
+                    crate::CableState::from_ctx(ui.ctx(), |state| {
                         Some((
                             state.get_port_position(&source)?,
                             state.get_port_position(&target)?,
@@ -35,11 +32,11 @@ pub fn cables(
             }
 
             if let Some((in_progress_cable_pos, in_progress_cable_id)) =
-                widget::CableState::from_ctx(ui.ctx(), |state| state.in_progress_cable())
+                crate::CableState::from_ctx(ui.ctx(), |state| state.in_progress_cable())
             {
                 if let Some(mut cursor_pos) = ui.ctx().input(|i| i.pointer.interact_pos()) {
                     let (closest_cable, position) =
-                        widget::CableState::from_ctx(ui.ctx(), |state| {
+                        crate::CableState::from_ctx(ui.ctx(), |state| {
                             state.closest_port_at_pos(cursor_pos)
                         })
                         .unwrap();
@@ -54,7 +51,7 @@ pub fn cables(
                             .ctx()
                             .input(|i| i.pointer.button_released(egui::PointerButton::Primary))
                         {
-                            if in_progress_cable_id.direction == widget::PortDirection::Input {
+                            if in_progress_cable_id.direction == crate::PortDirection::Input {
                                 new_connection =
                                     Some((closest_cable, in_progress_cable_id.clone()));
                             } else {
@@ -62,13 +59,13 @@ pub fn cables(
                                     Some((in_progress_cable_id.clone(), closest_cable));
                             }
 
-                            widget::CableState::from_ctx(ui.ctx(), |state| {
+                            crate::CableState::<BlockId>::from_ctx(ui.ctx(), |state| {
                                 state.clear_in_progress_cable()
                             });
                         }
                     }
 
-                    if in_progress_cable_id.direction == widget::PortDirection::Output {
+                    if in_progress_cable_id.direction == crate::PortDirection::Output {
                         paint_cable_curve(painter, in_progress_cable_pos, cursor_pos, cable_stroke);
                     } else {
                         paint_cable_curve(painter, cursor_pos, in_progress_cable_pos, cable_stroke);
@@ -80,7 +77,9 @@ pub fn cables(
                 .ctx()
                 .input(|i| i.pointer.button_clicked(egui::PointerButton::Secondary))
             {
-                widget::CableState::from_ctx(ui.ctx(), |state| state.clear_in_progress_cable());
+                crate::CableState::<BlockId>::from_ctx(ui.ctx(), |state| {
+                    state.clear_in_progress_cable()
+                });
             }
 
             CableResponse { new_connection }

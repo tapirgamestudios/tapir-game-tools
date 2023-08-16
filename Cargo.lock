@@ -2374,6 +2374,9 @@ dependencies = [
 [[package]]
 name = "tapir-cables"
 version = "0.1.0"
+dependencies = [
+ "egui",
+]
 
 [[package]]
 name = "tapir-sounds"
@@ -2390,6 +2393,7 @@ dependencies = [
  "midir",
  "midly",
  "ron",
+ "tapir-cables",
  "tapir-sounds-state",
  "tinyaudio",
 ]
