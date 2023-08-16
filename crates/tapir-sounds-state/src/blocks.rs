@@ -82,6 +82,12 @@ impl BlockFactory {
     }
 }
 
+impl Default for BlockFactory {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Clone)]
 pub struct Block {
     block_type: Box<dyn BlockType>,
