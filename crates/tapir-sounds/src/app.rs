@@ -10,14 +10,8 @@ use crate::audio;
 use crate::midi;
 use crate::save_load;
 use crate::widget;
+use crate::widget::open_save;
 use tapir_sounds_state::calculate;
-
-#[derive(Clone, Copy)]
-enum SaveState {
-    Open,
-    SaveAs,
-    Export,
-}
 
 pub struct TapirSoundApp {
     state: tapir_sounds_state::State,
@@ -30,14 +24,12 @@ pub struct TapirSoundApp {
 
     pan: egui::Vec2,
 
-    open_file_dialog: Option<(egui_file::FileDialog, SaveState)>,
-    file_path: Option<PathBuf>,
-    file_dirty: bool,
-
     audio: Arc<audio::Audio>,
     _audio_device: Option<Box<dyn tinyaudio::BaseAudioOutputDevice>>,
 
     midi: Option<midi::Midi>,
+
+    open_save: open_save::OpenSave,
 }
 
 impl TapirSoundApp {
@@ -84,14 +76,12 @@ impl TapirSoundApp {
             last_updated_audio_id: None,
             toasts,
 
-            open_file_dialog: None,
-            file_path: file_path.clone(),
-            file_dirty: false,
-
             audio,
             _audio_device: device,
 
             midi,
+
+            open_save: open_save::OpenSave::new(file_path.clone()),
         };
 
         if let Some(file_path) = file_path {
@@ -132,128 +122,6 @@ impl TapirSoundApp {
         }
     }
 
-    fn save_as(&mut self) {
-        let file_path = self.file_path.clone();
-
-        self.open_file_dialog
-            .get_or_insert_with(|| (Self::save_dialog(file_path, "Save As"), SaveState::SaveAs));
-    }
-
-    fn save(&mut self) {
-        if let Some(path) = &self.file_path {
-            if let Err(e) = save_load::save(&self.state, path) {
-                self.toasts.error(e.to_string()).set_closable(true);
-                return;
-            }
-
-            self.file_dirty = false;
-
-            self.toasts.basic(format!(
-                "Saved to {}",
-                path.file_name().unwrap().to_string_lossy()
-            ));
-        } else {
-            self.save_as();
-        }
-    }
-
-    fn open(&mut self, filepath: &Path) {
-        self.state = match save_load::load(filepath, &self.block_factory) {
-            Ok(state) => state,
-            Err(e) => {
-                self.toasts.error(e.to_string()).set_closable(true);
-                return;
-            }
-        };
-        let average_location = self.state.average_location();
-        self.pan = -egui::vec2(average_location.0, average_location.1);
-        self.audio.set_should_loop(self.state.should_loop());
-        self.file_dirty = false;
-    }
-
-    fn open_as(&mut self) {
-        let file_path = self.file_path.clone();
-        self.open_file_dialog
-            .get_or_insert_with(|| (Self::open_dialog(file_path), SaveState::Open));
-    }
-
-    fn export_as(&mut self) {
-        if self.calculator.is_calculating() {
-            return;
-        };
-
-        let filepath = self.file_path.as_ref().map(|fp| fp.with_extension("wav"));
-        self.open_file_dialog
-            .get_or_insert_with(|| (Self::save_dialog(filepath, "Export"), SaveState::Export));
-    }
-
-    fn export(&mut self, filepath: &Path) {
-        if !self.state.blocks().any(|_| true) {
-            self.toasts.warning("Nothing to export");
-            return;
-        }
-
-        let Some(results) = self.calculator.results() else {
-            self.toasts.warning("Did not export as still calculating");
-            return;
-        };
-
-        let Some(data) = self
-            .state
-            .selected_block()
-            .and_then(|id| results.for_block(id))
-        else {
-            self.toasts.warning("Did not export as nothing is selected");
-            return;
-        };
-
-        match save_load::export(filepath, data, self.state.frequency()) {
-            Ok(()) => {
-                self.toasts.basic(format!(
-                    "Exported to {}",
-                    filepath.file_name().unwrap().to_string_lossy()
-                ));
-            }
-            Err(e) => {
-                self.toasts.error(e.to_string()).set_closable(true);
-            }
-        };
-    }
-
-    fn save_dialog(path: Option<PathBuf>, title: &str) -> egui_file::FileDialog {
-        let mut dialog = egui_file::FileDialog::save_file(
-            path.clone()
-                .and_then(|path| path.parent().map(|parent| parent.to_owned())),
-        )
-        .title(title);
-
-        if let Some(path) = path {
-            if let Some(filename) = path.file_name() {
-                dialog = dialog.default_filename(filename.to_string_lossy());
-            }
-        }
-
-        dialog.open();
-
-        dialog
-    }
-
-    fn open_dialog(path: Option<PathBuf>) -> egui_file::FileDialog {
-        let mut dialog = egui_file::FileDialog::open_file(
-            path.clone()
-                .and_then(|path| path.parent().map(|parent| parent.to_owned())),
-        );
-
-        if let Some(path) = path {
-            if let Some(filename) = path.file_name() {
-                dialog = dialog.default_filename(filename.to_string_lossy());
-            }
-        }
-        dialog.open();
-
-        dialog
-    }
-
     fn midi_combo_box(&mut self, ui: &mut egui::Ui) {
         let Some(midi) = &mut self.midi else {
             ui.label("Midi failed to initialize");
@@ -288,50 +156,6 @@ impl TapirSoundApp {
             }
         }
     }
-
-    fn file_dialog_handling(&mut self, ctx: &egui::Context) {
-        let save_action = if let Some((dialog, save_state)) = &mut self.open_file_dialog {
-            dialog.show(ctx);
-
-            if dialog.selected() {
-                Some((dialog.path().map(|path| path.to_owned()), *save_state))
-            } else if matches!(
-                dialog.state(),
-                egui_file::State::Closed | egui_file::State::Cancelled
-            ) {
-                Some((None, *save_state))
-            } else {
-                None
-            }
-        } else {
-            None
-        };
-
-        // Need to do this to make the borrow checker happy
-        match save_action {
-            Some((Some(path), save_state)) => {
-                match save_state {
-                    SaveState::Open => {
-                        self.open(&path);
-                        self.file_path = Some(path);
-                    }
-                    SaveState::SaveAs => {
-                        self.file_path = Some(path.with_extension("tapir_sound"));
-                        self.save();
-                    }
-                    SaveState::Export => {
-                        self.export(&path.with_extension("wav"));
-                    }
-                }
-
-                self.open_file_dialog = None;
-            }
-            Some((None, _)) => {
-                self.open_file_dialog = None;
-            }
-            None => {}
-        }
-    }
 }
 
 impl eframe::App for TapirSoundApp {
@@ -343,8 +167,7 @@ impl eframe::App for TapirSoundApp {
                         || ui.input(|i| i.modifiers.command && i.key_down(egui::Key::N))
                     {
                         self.state = tapir_sounds_state::State::default();
-                        self.file_path = None;
-                        self.file_dirty = false;
+                        self.open_save = open_save::OpenSave::new(None);
                         ui.close_menu();
                     }
 
@@ -353,9 +176,9 @@ impl eframe::App for TapirSoundApp {
                         ui.close_menu();
                     }
 
-                    if self.file_path.is_some() {
+                    if let Some(path) = self.open_save.file_name() {
                         if ui.button("Save").clicked() {
-                            self.save();
+                            self.save(&path);
                             ui.close_menu();
                         }
                     } else {
@@ -388,7 +211,7 @@ impl eframe::App for TapirSoundApp {
                 if ui.checkbox(&mut should_loop, "Loop").changed() {
                     self.audio.set_should_loop(should_loop);
                     self.state.set_should_loop(should_loop);
-                    self.file_dirty = true;
+                    self.open_save.mark_dirty();
                 };
 
                 self.midi_combo_box(ui);
@@ -470,26 +293,26 @@ impl eframe::App for TapirSoundApp {
                         block.set_input(*alteration_index, alteration_value);
                     }
 
-                    self.file_dirty = true;
+                    self.open_save.mark_dirty();
                 }
 
                 if response.selected {
                     self.state.set_selected_block(*id);
                     selected_changed = true;
 
-                    self.file_dirty = true;
+                    self.open_save.mark_dirty();
                 }
 
                 if response.drag_delta.length_sq() > 0.0 {
                     let block = self.state.get_block_mut(*id).unwrap();
                     block.pos_delta((response.drag_delta.x, response.drag_delta.y));
 
-                    self.file_dirty = true;
+                    self.open_save.mark_dirty();
                 }
 
                 if response.delete {
                     self.state.remove_block(*id);
-                    self.file_dirty = true;
+                    self.open_save.mark_dirty();
                 }
             }
 
@@ -519,7 +342,7 @@ impl eframe::App for TapirSoundApp {
                 self.state
                     .add_connection((output.block_id, (input.block_id, input.index)));
 
-                self.file_dirty = true;
+                self.open_save.mark_dirty();
             }
 
             if background_response.dragged() && ui.ctx().input(|i| i.pointer.middle_down()) {
@@ -540,7 +363,11 @@ impl eframe::App for TapirSoundApp {
         }
 
         if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::S)) {
-            self.save();
+            if let Some(path) = self.open_save.file_name() {
+                self.save(&path);
+            } else {
+                self.save_as();
+            }
         }
 
         if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::E)) {
@@ -556,17 +383,98 @@ impl eframe::App for TapirSoundApp {
             self.update_audio();
         }
 
-        if let Some(file_path) = self.file_path.as_ref().and_then(|fp| fp.file_name()) {
-            let display_str = file_path.to_string_lossy();
-            frame.set_window_title(&format!(
-                "Tapir sounds - {display_str}{}",
-                if self.file_dirty { "*" } else { "" }
-            ));
+        if let Some(title_display) = self.open_save.title_display() {
+            frame.set_window_title(&("Tapir Sounds - ".to_owned() + &title_display));
         } else {
-            frame.set_window_title("Tapir sounds");
+            frame.set_window_title("Tapir Sounds");
         }
 
-        self.file_dialog_handling(ctx);
+        match self.open_save.show(ctx) {
+            open_save::OpenSaveResponse::Nothing => {}
+            open_save::OpenSaveResponse::Open(path) => self.open(&path),
+            open_save::OpenSaveResponse::Save(path) => self.save(&path),
+            open_save::OpenSaveResponse::Export(path) => self.export(&path),
+        }
+
         self.toasts.show(ctx);
+    }
+}
+
+impl TapirSoundApp {
+    fn save_as(&mut self) {
+        self.open_save.save_as();
+    }
+
+    fn save(&mut self, file_path: &Path) {
+        if let Err(e) = save_load::save(&self.state, file_path) {
+            self.toasts.error(e.to_string()).set_closable(true);
+            return;
+        }
+
+        self.open_save.mark_clean();
+
+        self.toasts.basic(format!(
+            "Saved to {}",
+            file_path.file_name().unwrap().to_string_lossy()
+        ));
+    }
+
+    fn open(&mut self, filepath: &Path) {
+        self.state = match save_load::load(filepath, &self.block_factory) {
+            Ok(state) => state,
+            Err(e) => {
+                self.toasts.error(e.to_string()).set_closable(true);
+                return;
+            }
+        };
+        let average_location = self.state.average_location();
+        self.pan = -egui::vec2(average_location.0, average_location.1);
+        self.audio.set_should_loop(self.state.should_loop());
+        self.open_save.mark_clean();
+    }
+
+    fn open_as(&mut self) {
+        self.open_save.open_as();
+    }
+
+    fn export_as(&mut self) {
+        if self.calculator.is_calculating() {
+            return;
+        };
+
+        self.open_save.export_as();
+    }
+
+    fn export(&mut self, filepath: &Path) {
+        if !self.state.blocks().any(|_| true) {
+            self.toasts.warning("Nothing to export");
+            return;
+        }
+
+        let Some(results) = self.calculator.results() else {
+            self.toasts.warning("Did not export as still calculating");
+            return;
+        };
+
+        let Some(data) = self
+            .state
+            .selected_block()
+            .and_then(|id| results.for_block(id))
+        else {
+            self.toasts.warning("Did not export as nothing is selected");
+            return;
+        };
+
+        match save_load::export(filepath, data, self.state.frequency()) {
+            Ok(()) => {
+                self.toasts.basic(format!(
+                    "Exported to {}",
+                    filepath.file_name().unwrap().to_string_lossy()
+                ));
+            }
+            Err(e) => {
+                self.toasts.error(e.to_string()).set_closable(true);
+            }
+        };
     }
 }
