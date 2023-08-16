@@ -15,6 +15,7 @@ use tapir_sounds_state::calculate;
 
 pub struct TapirSoundApp {
     state: tapir_sounds_state::State,
+
     calculator: calculate::Calculator,
     last_updated_audio_id: Option<calculate::CalculationId>,
 
@@ -144,46 +145,7 @@ impl eframe::App for TapirSoundApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
-                ui.menu_button("File", |ui| {
-                    if ui.button("New").clicked()
-                        || ui.input(|i| i.modifiers.command && i.key_down(egui::Key::N))
-                    {
-                        self.state = tapir_sounds_state::State::default();
-                        self.open_save = open_save::OpenSave::new(None);
-                        ui.close_menu();
-                    }
-
-                    if ui.button("Open").clicked() {
-                        self.open_as();
-                        ui.close_menu();
-                    }
-
-                    if let Some(path) = self.open_save.file_name() {
-                        if ui.button("Save").clicked() {
-                            self.save(&path);
-                            ui.close_menu();
-                        }
-                    } else {
-                        ui.add_enabled(false, egui::Button::new("Save"));
-                    }
-
-                    if ui.button("Save as...").clicked() {
-                        self.save_as();
-                        ui.close_menu();
-                    }
-
-                    if ui.button("Export").clicked() {
-                        self.export_as();
-                        ui.close_menu();
-                    }
-
-                    ui.separator();
-
-                    if ui.button("Quit").clicked() {
-                        frame.close();
-                        ui.close_menu();
-                    }
-                });
+                self.file_menu(ui, ctx, frame);
             });
         });
 
@@ -344,22 +306,6 @@ impl eframe::App for TapirSoundApp {
             self.audio.toggle_playing();
         }
 
-        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::S)) {
-            if let Some(path) = self.open_save.file_name() {
-                self.save(&path);
-            } else {
-                self.save_as();
-            }
-        }
-
-        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::E)) {
-            self.export_as();
-        }
-
-        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::O)) {
-            self.open_as();
-        }
-
         let results = self.calculator.results();
         if results.map(|result| result.id()) != self.last_updated_audio_id {
             self.update_audio();
@@ -383,6 +329,65 @@ impl eframe::App for TapirSoundApp {
 }
 
 impl TapirSoundApp {
+    fn file_menu(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::S)) {
+            if let Some(path) = self.open_save.file_name() {
+                self.save(&path);
+            } else {
+                self.save_as();
+            }
+        }
+
+        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::E)) {
+            self.export_as();
+        }
+
+        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::O)) {
+            self.open_as();
+        }
+
+        ui.menu_button("File", |ui| {
+            if ui.button("New").clicked()
+                || ui.input(|i| i.modifiers.command && i.key_down(egui::Key::N))
+            {
+                self.state = tapir_sounds_state::State::default();
+                self.open_save = open_save::OpenSave::new(None);
+                ui.close_menu();
+            }
+
+            if ui.button("Open").clicked() {
+                self.open_as();
+                ui.close_menu();
+            }
+
+            if let Some(path) = self.open_save.file_name() {
+                if ui.button("Save").clicked() {
+                    self.save(&path);
+                    ui.close_menu();
+                }
+            } else {
+                ui.add_enabled(false, egui::Button::new("Save"));
+            }
+
+            if ui.button("Save as...").clicked() {
+                self.save_as();
+                ui.close_menu();
+            }
+
+            if ui.button("Export").clicked() {
+                self.export_as();
+                ui.close_menu();
+            }
+
+            ui.separator();
+
+            if ui.button("Quit").clicked() {
+                frame.close();
+                ui.close_menu();
+            }
+        });
+    }
+
     fn save_as(&mut self) {
         self.open_save.save_as();
     }
