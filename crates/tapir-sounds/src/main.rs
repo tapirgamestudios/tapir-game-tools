@@ -7,6 +7,7 @@ use app::TapirSoundApp;
 
 mod app;
 mod audio;
+mod midi;
 mod save_load;
 mod widget;
 
