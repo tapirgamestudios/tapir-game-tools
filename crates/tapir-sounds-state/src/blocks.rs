@@ -3,6 +3,7 @@ use std::{borrow::Cow, collections::HashMap, rc::Rc, sync::Arc};
 mod amplify;
 mod band_pass_filter;
 mod cross_fade;
+mod cut;
 mod dc_offset;
 mod fade;
 mod fundamental_shape;
@@ -14,6 +15,7 @@ use self::{
     amplify::Amplify,
     band_pass_filter::BandPassFilter,
     cross_fade::CrossFade,
+    cut::Cut,
     dc_offset::DcOffset,
     fade::Fade,
     fundamental_shape::{FundamentalShapeBlock, FundamentalShapeType},
@@ -66,6 +68,7 @@ impl BlockFactory {
         register_block!(BandPassFilter);
         register_block!(Amplify);
         register_block!(DcOffset);
+        register_block!(Cut);
 
         Self { creation_functions }
     }
@@ -112,6 +115,7 @@ pub enum Input {
     Frequency(f64),
     Amplitude(f64),
     Periods(f64),
+    Input,
 }
 
 impl Block {

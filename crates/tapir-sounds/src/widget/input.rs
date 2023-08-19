@@ -98,5 +98,9 @@ pub fn input(
             })
             .inner
         }
+        tapir_sounds_state::Input::Input => droppable_input(ui, block_id, index, |ui| {
+            ui.label(name);
+            None
+        }),
     }
 }
