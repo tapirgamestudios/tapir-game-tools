@@ -1,5 +1,6 @@
 use std::{borrow::Cow, collections::HashMap, rc::Rc, sync::Arc};
 
+mod amplify;
 mod band_pass_filter;
 mod cross_fade;
 mod fade;
@@ -9,6 +10,7 @@ mod noise;
 use serde::{Deserialize, Serialize};
 
 use self::{
+    amplify::Amplify,
     band_pass_filter::BandPassFilter,
     cross_fade::CrossFade,
     fade::Fade,
@@ -50,13 +52,17 @@ impl BlockFactory {
             );
         }
 
-        creation_functions.insert(Noise::name(), Box::new(|| Box::<Noise>::default()));
-        creation_functions.insert(CrossFade::name(), Box::new(|| Box::<CrossFade>::default()));
-        creation_functions.insert(Fade::name(), Box::new(|| Box::<Fade>::default()));
-        creation_functions.insert(
-            BandPassFilter::name(),
-            Box::new(|| Box::<BandPassFilter>::default()),
-        );
+        macro_rules! register_block {
+            ($Block:ident) => {
+                creation_functions.insert($Block::name(), Box::new(|| Box::<$Block>::default()))
+            };
+        }
+
+        register_block!(Noise);
+        register_block!(CrossFade);
+        register_block!(Fade);
+        register_block!(BandPassFilter);
+        register_block!(Amplify);
 
         Self { creation_functions }
     }

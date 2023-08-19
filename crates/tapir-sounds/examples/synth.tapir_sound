@@ -1,6 +1,18 @@
 (
     blocks: [
         (
+            id: "0dd7e124-7c0b-4f81-bec2-77ee2b08ba06",
+            name: (
+                category: Alter,
+                name: "Amplify",
+            ),
+            inputs: [
+                Amplitude(0.46),
+            ],
+            x: 2226.4717,
+            y: 1683.57,
+        ),
+        (
             id: "24c91dcd-8925-4aff-8fbc-406d4eaa882b",
             name: (
                 category: Combine,
@@ -99,8 +111,8 @@
                 Periods(0.0),
                 Periods(0.1),
             ],
-            x: 1918.3646,
-            y: 1694.9817,
+            x: 1922.255,
+            y: 1673.7856,
         ),
         (
             id: "d252d5ae-664b-41d2-9ef6-ed6cbce1e9bb",
@@ -140,10 +152,11 @@
         ("5d300b9d-398e-46f5-af02-073fd396e997", "24c91dcd-8925-4aff-8fbc-406d4eaa882b", 0),
         ("8fbb0897-b5fa-4c45-8394-a7a73ea6faac", "2faa130b-41b6-4499-a214-a807dec0c5a1", 0),
         ("98c6013c-9523-45a7-b49b-cbc8ea029710", "2faa130b-41b6-4499-a214-a807dec0c5a1", 2),
+        ("c5b94827-4d86-40c7-ba86-1330e6cc157f", "0dd7e124-7c0b-4f81-bec2-77ee2b08ba06", 0),
         ("d252d5ae-664b-41d2-9ef6-ed6cbce1e9bb", "8fbb0897-b5fa-4c45-8394-a7a73ea6faac", 0),
         ("f9bdd710-9613-4d2e-91b2-04e7de61a66a", "24c91dcd-8925-4aff-8fbc-406d4eaa882b", 2),
     ],
     frequency: 18157.0,
-    selected_block: Some("c5b94827-4d86-40c7-ba86-1330e6cc157f"),
+    selected_block: Some("0dd7e124-7c0b-4f81-bec2-77ee2b08ba06"),
     should_loop: true,
 )
