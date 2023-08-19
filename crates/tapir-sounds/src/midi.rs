@@ -116,6 +116,8 @@ impl Midi {
                     }
                 },
             );
+
+            self.selected_midi_device = Some(in_port.clone());
         } else {
             self.midi_connection = None;
         }
