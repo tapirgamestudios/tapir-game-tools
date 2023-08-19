@@ -1,0 +1,52 @@
+(
+    blocks: [
+        (
+            id: "44ee00af-a837-4810-9e72-4c1331a9fded",
+            name: (
+                category: Alter,
+                name: "Band pass filter",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.2),
+                Periods(0.7),
+            ],
+            x: -131.43042,
+            y: -152.69342,
+        ),
+        (
+            id: "b5ff7815-972c-4359-aafd-079c0699bd58",
+            name: (
+                category: Combine,
+                name: "Fade",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.3),
+            ],
+            x: 192.72363,
+            y: -140.21313,
+        ),
+        (
+            id: "fbc281b3-1e64-4e61-bb40-2767d94b858e",
+            name: (
+                category: Fundamental,
+                name: "Noise",
+            ),
+            inputs: [
+                Periods(0.1),
+                Amplitude(1.0),
+                Periods(0.0),
+            ],
+            x: -458.10522,
+            y: -152.055,
+        ),
+    ],
+    connections: [
+        ("44ee00af-a837-4810-9e72-4c1331a9fded", "b5ff7815-972c-4359-aafd-079c0699bd58", 0),
+        ("fbc281b3-1e64-4e61-bb40-2767d94b858e", "44ee00af-a837-4810-9e72-4c1331a9fded", 0),
+    ],
+    frequency: 18157.0,
+    selected_block: Some("b5ff7815-972c-4359-aafd-079c0699bd58"),
+    should_loop: false,
+)
