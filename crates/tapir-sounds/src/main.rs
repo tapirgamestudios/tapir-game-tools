@@ -9,6 +9,7 @@ mod app;
 mod audio;
 mod midi;
 mod save_load;
+mod sound_io;
 mod widget;
 
 fn main() -> Result<(), eframe::Error> {

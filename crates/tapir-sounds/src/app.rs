@@ -9,6 +9,7 @@ use eframe::egui;
 use crate::audio;
 use crate::midi;
 use crate::save_load;
+use crate::sound_io;
 use crate::widget;
 use crate::widget::open_save;
 use tapir_sounds_state::calculate;
@@ -26,7 +27,7 @@ pub struct TapirSoundApp {
     pan: egui::Vec2,
 
     audio: Arc<audio::Audio>,
-    _audio_device: Option<Box<dyn tinyaudio::BaseAudioOutputDevice>>,
+    _sound_io: sound_io::SoundIo,
 
     midi: Option<midi::Midi>,
 
@@ -41,16 +42,14 @@ impl TapirSoundApp {
         let mut toasts = egui_notify::Toasts::default();
 
         let audio: Arc<audio::Audio> = Default::default();
-        let device = match Self::start_sound(audio.clone()) {
-            Err(e) => {
-                toasts
-                    .error(e.to_string())
-                    .set_closable(false)
-                    .set_duration(None);
-                None
-            }
-            Ok(device) => Some(device),
-        };
+        let mut sound_io = sound_io::SoundIo::new(audio.clone());
+
+        if let Err(e) = sound_io.start_sound() {
+            toasts
+                .error(e.to_string())
+                .set_closable(false)
+                .set_duration(None);
+        }
 
         toasts
             .info("Double click a block to activate it. Press space to play.")
@@ -78,7 +77,7 @@ impl TapirSoundApp {
             toasts,
 
             audio,
-            _audio_device: device,
+            _sound_io: sound_io,
 
             midi,
 
@@ -90,21 +89,6 @@ impl TapirSoundApp {
         }
 
         app
-    }
-
-    fn start_sound(
-        audio: Arc<audio::Audio>,
-    ) -> anyhow::Result<Box<dyn tinyaudio::BaseAudioOutputDevice>> {
-        let params = tinyaudio::OutputDeviceParameters {
-            channels_count: 2,
-            sample_rate: 44100,
-            channel_sample_count: 441,
-        };
-
-        tinyaudio::run_output_device(params, move |data| {
-            audio.play(data, params.channels_count, params.sample_rate as f64);
-        })
-        .map_err(|e| anyhow::anyhow!("Failed to initialize tinyaudio: {e}"))
     }
 
     fn update_audio(&mut self) {
