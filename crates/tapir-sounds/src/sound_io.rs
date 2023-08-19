@@ -25,20 +25,34 @@ impl SoundIo {
 
         let audio = self.audio.clone();
 
-        let config = output_device.default_output_config()?.into();
-        let stream = output_device.build_output_stream(
-            &config,
-            move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                audio.play(data, config.channels as usize, config.sample_rate.0 as f64);
-            },
-            err_fn,
-            None,
-        )?;
+        let supported_config = output_device.default_output_config()?;
+
+        let stream = run(&output_device, &supported_config.into(), audio)?;
 
         self.stream = Some(stream);
 
         Ok(())
     }
+}
+
+fn run(
+    output_device: &cpal::Device,
+    config: &cpal::StreamConfig,
+    audio: Arc<audio::Audio>,
+) -> anyhow::Result<cpal::Stream> {
+    let channel_count = config.channels as usize;
+    let frequency = config.sample_rate.0 as f64;
+
+    let stream = output_device.build_output_stream(
+        config,
+        move |data, _| {
+            audio.play(data, channel_count, frequency);
+        },
+        err_fn,
+        None,
+    )?;
+
+    Ok(stream)
 }
 
 fn err_fn(err: cpal::StreamError) {
