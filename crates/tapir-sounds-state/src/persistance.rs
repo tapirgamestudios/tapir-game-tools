@@ -1,4 +1,4 @@
-use std::{borrow::Cow, rc::Rc};
+use std::rc::Rc;
 
 use serde::{Deserialize, Serialize};
 
@@ -8,7 +8,7 @@ use super::blocks::BlockName;
 struct PersistedBlock {
     id: uuid::Uuid,
     name: BlockName,
-    inputs: Rc<[(Cow<'static, str>, super::Input)]>,
+    inputs: Rc<[super::Input]>,
     x: f32,
     y: f32,
 }
@@ -20,7 +20,11 @@ impl PersistedBlock {
         Self {
             id: block.id().0,
             name: block.name(),
-            inputs: block.inputs().clone(),
+            inputs: block
+                .inputs()
+                .iter()
+                .map(|(_, input)| input.clone())
+                .collect(),
             x: block_pos.0,
             y: block_pos.1,
         }
@@ -30,7 +34,7 @@ impl PersistedBlock {
         let mut block =
             block_factory.make_block_with_id(&self.name, (self.x, self.y), super::Id(self.id));
         for (index, input) in self.inputs.iter().enumerate() {
-            block.set_input(index, &input.1);
+            block.set_input(index, input);
         }
 
         block
