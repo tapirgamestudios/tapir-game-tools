@@ -1,36 +1,46 @@
 use std::sync::Arc;
 
+use cpal::traits::{DeviceTrait, HostTrait};
+
 use crate::audio;
 
 pub struct SoundIo {
     audio: Arc<audio::Audio>,
-    device: Option<Box<dyn tinyaudio::BaseAudioOutputDevice>>,
+    stream: Option<cpal::Stream>,
 }
 
 impl SoundIo {
     pub fn new(audio: Arc<audio::Audio>) -> Self {
         Self {
             audio,
-            device: None,
+            stream: None,
         }
     }
 
     pub fn start_sound(&mut self) -> anyhow::Result<()> {
-        let params = tinyaudio::OutputDeviceParameters {
-            channels_count: 2,
-            sample_rate: 44100,
-            channel_sample_count: 441,
-        };
+        let host = cpal::default_host();
+        let output_device = host
+            .default_output_device()
+            .ok_or_else(|| anyhow::anyhow!("Failed to open default audio output"))?;
 
         let audio = self.audio.clone();
 
-        let output_device = tinyaudio::run_output_device(params, move |data| {
-            audio.play(data, params.channels_count, params.sample_rate as f64);
-        })
-        .map_err(|e| anyhow::anyhow!("Failed to initialize audio: {e}"))?;
+        let config = output_device.default_output_config()?.into();
+        let stream = output_device.build_output_stream(
+            &config,
+            move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                audio.play(data, config.channels as usize, config.sample_rate.0 as f64);
+            },
+            err_fn,
+            None,
+        )?;
 
-        self.device = Some(output_device);
+        self.stream = Some(stream);
 
         Ok(())
     }
+}
+
+fn err_fn(err: cpal::StreamError) {
+    eprintln!("an error occurred on stream: {}", err);
 }

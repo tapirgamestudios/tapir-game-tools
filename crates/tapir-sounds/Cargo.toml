@@ -12,6 +12,7 @@ tapir-sounds-state = { path = "../tapir-sounds-state" }
 anyhow = "1.0"
 arc-swap = "1.6.0"
 catppuccin-egui = "3.0"
+cpal = "0.15"
 eframe = "0.22"
 egui-notify = "0.7"
 egui_file = "0.10"
@@ -20,4 +21,3 @@ hound = "3.5"
 midir = "0.9"
 midly = { version = "0.5", default-features = false, features = ["std"] }
 ron = "0.8"
-tinyaudio = "0.1"
