@@ -21,5 +21,5 @@ pub fn midi_combo_box(ui: &mut egui::Ui, midi: &mut midi::Midi) -> Result<(), mi
             }
         });
 
-    midi.update_selected_device(&selected_device)
+    midi.update_selected_device(selected_device.as_ref())
 }

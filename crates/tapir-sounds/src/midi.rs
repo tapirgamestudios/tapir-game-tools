@@ -59,9 +59,9 @@ impl Midi {
 
     pub fn update_selected_device(
         &mut self,
-        selected_midi_device: &Option<MidiDevice>,
+        selected_midi_device: Option<&MidiDevice>,
     ) -> Result<(), MidiError> {
-        if selected_midi_device == &self.selected_midi_device {
+        if selected_midi_device == self.selected_midi_device.as_ref() {
             return Ok(());
         }
 
