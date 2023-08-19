@@ -1,4 +1,4 @@
-use std::{borrow::Cow, rc::Rc};
+use std::{borrow::Cow, rc::Rc, sync::Arc};
 
 use super::{BlockName, BlockType, Input};
 
@@ -57,11 +57,11 @@ impl BlockType for BandPassFilter {
         }
     }
 
-    fn calculate(&self, _global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64> {
-        let input = inputs[0].unwrap_or_default();
+    fn calculate(&self, _global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]> {
+        let input = inputs[0].clone().unwrap_or(Arc::new([]));
 
         if input.is_empty() {
-            return vec![];
+            return vec![].into();
         }
 
         let mut buffer: Vec<_> = input

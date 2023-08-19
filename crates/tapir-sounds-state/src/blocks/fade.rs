@@ -1,4 +1,4 @@
-use std::{borrow::Cow, rc::Rc};
+use std::{borrow::Cow, rc::Rc, sync::Arc};
 
 use super::BlockType;
 
@@ -51,8 +51,8 @@ impl BlockType for Fade {
         }
     }
 
-    fn calculate(&self, _global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64> {
-        let input = inputs[0].unwrap_or_default();
+    fn calculate(&self, _global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]> {
+        let input = inputs[0].clone().unwrap_or(Arc::new([]));
 
         let length = input.len() as f64 * (1.0 - self.offset);
         let offset_start = (input.len() as f64 * self.offset) as usize;

@@ -1,4 +1,4 @@
-use std::{borrow::Cow, rc::Rc};
+use std::{borrow::Cow, rc::Rc, sync::Arc};
 
 #[derive(Clone)]
 pub struct CrossFade {
@@ -64,49 +64,57 @@ impl super::BlockType for CrossFade {
         }
     }
 
-    fn calculate(&self, _global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64> {
-        let left_input = inputs[0];
-        let cross_input = inputs[1];
-        let right_input = inputs[2];
+    fn calculate(&self, _global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]> {
+        let left_input = inputs[0].clone();
+        let cross_input = inputs[1].clone();
+        let right_input = inputs[2].clone();
 
         // if should_loop, we take the maximum length of all the inputs otherwise minimum
         let output_length = if self.should_loop {
             left_input
+                .as_ref()
                 .map(|left_input| left_input.len())
                 .unwrap_or(0)
                 .max(
                     cross_input
+                        .as_ref()
                         .map(|cross_input| cross_input.len())
                         .unwrap_or(0),
                 )
                 .max(
                     right_input
+                        .as_ref()
                         .map(|right_input| right_input.len())
                         .unwrap_or(0),
                 )
         } else {
             left_input
+                .as_ref()
                 .map(|left_input| left_input.len())
                 .unwrap_or(usize::MAX)
                 .min(
                     cross_input
+                        .as_ref()
                         .map(|cross_input| cross_input.len())
                         .unwrap_or(usize::MAX),
                 )
                 .min(
                     right_input
+                        .as_ref()
                         .map(|right_input| right_input.len())
                         .unwrap_or(usize::MAX),
                 )
         };
 
         if output_length == 0 || output_length == usize::MAX {
-            return vec![];
+            return Arc::new([]);
         }
 
-        let left_input = left_input.unwrap_or(&[0.0]);
-        let cross_input = cross_input.unwrap_or(&[0.0]);
-        let right_input = right_input.unwrap_or(&[0.0]);
+        let zero_array = Arc::new([0.0]);
+
+        let left_input = left_input.unwrap_or_else(|| zero_array.clone());
+        let cross_input = cross_input.unwrap_or_else(|| zero_array.clone());
+        let right_input = right_input.unwrap_or_else(|| zero_array.clone());
 
         (0..output_length)
             .map(|i| {

@@ -1,4 +1,4 @@
-use std::{borrow::Cow, rc::Rc};
+use std::{borrow::Cow, rc::Rc, sync::Arc};
 
 use super::{BlockName, BlockType};
 
@@ -62,9 +62,9 @@ impl BlockType for Noise {
         }
     }
 
-    fn calculate(&self, global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64> {
+    fn calculate(&self, global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]> {
         let mut rng = fastrand::Rng::with_seed(self.seed.to_bits());
-        let amplitude = inputs[1];
+        let amplitude = inputs[1].clone().unwrap_or(Arc::new([1.0]));
 
         let length = (self.time * global_frequency) as usize;
 
@@ -72,12 +72,10 @@ impl BlockType for Noise {
 
         for i in 0..length {
             ret.push(
-                (rng.f64() * 2.0 - 1.0)
-                    * self.base_amplitude
-                    * amplitude.map(|a| a[i % a.len()]).unwrap_or(1.0),
+                (rng.f64() * 2.0 - 1.0) * self.base_amplitude * amplitude[i % amplitude.len()],
             );
         }
 
-        ret
+        ret.into()
     }
 }

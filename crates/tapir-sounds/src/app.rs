@@ -114,12 +114,11 @@ impl TapirSoundApp {
         if let Some(selected) = self
             .state
             .selected_block()
-            .and_then(|id| results.and_then(|result| result.for_block(id).cloned()))
+            .and_then(|id| results.and_then(|result| result.for_block(id)))
         {
             self.audio.set_buffer(selected, self.state.frequency());
         } else {
-            self.audio
-                .set_buffer(Default::default(), self.state.frequency());
+            self.audio.set_buffer(Arc::new([]), self.state.frequency());
         }
     }
 
@@ -452,7 +451,7 @@ impl TapirSoundApp {
             return;
         };
 
-        match save_load::export(filepath, data, self.state.frequency()) {
+        match save_load::export(filepath, &data, self.state.frequency()) {
             Ok(()) => {
                 self.toasts.basic(format!(
                     "Exported to {}",

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use eframe::egui;
 
 use crate::widget;
@@ -13,7 +15,7 @@ pub fn block(
     ui: &mut egui::Ui,
     block: &tapir_sounds_state::Block,
     is_selected: bool,
-    display: Option<&Vec<f64>>,
+    display: Option<Arc<[f64]>>,
 ) -> BlockResponse {
     let mut alter_input = vec![];
 
@@ -50,7 +52,7 @@ pub fn block(
     }
 }
 
-fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<&Vec<f64>>) {
+fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<Arc<[f64]>>) {
     ui.horizontal(|ui| {
         egui::widgets::plot::Plot::new(egui::Id::new(block_id).with("plot"))
             .center_y_axis(true)
@@ -62,7 +64,14 @@ fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<&
             .height(50.0)
             .show(ui, |plot_ui| {
                 if let Some(display) = display {
-                    let line = egui::widgets::plot::PlotPoints::from_ys_f64(display);
+                    let display = display.clone();
+                    let len = display.len();
+
+                    let line = egui::widgets::plot::PlotPoints::from_explicit_callback(
+                        move |x| display[x as usize],
+                        0.0..=(len as f64 - 1.0),
+                        600,
+                    );
                     plot_ui.line(egui::widgets::plot::Line::new(line));
                 }
             });

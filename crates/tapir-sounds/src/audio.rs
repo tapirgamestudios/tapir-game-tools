@@ -3,10 +3,19 @@ use std::sync::{
     Arc,
 };
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 struct BufferData {
-    buffer: Vec<f64>,
+    buffer: Arc<[f64]>,
     frequency: f64,
+}
+
+impl Default for BufferData {
+    fn default() -> Self {
+        Self {
+            buffer: Arc::new([]),
+            frequency: Default::default(),
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -34,7 +43,7 @@ impl Default for Audio {
 }
 
 impl Audio {
-    pub fn set_buffer(&self, buffer: Vec<f64>, frequency: f64) {
+    pub fn set_buffer(&self, buffer: Arc<[f64]>, frequency: f64) {
         self.buffer
             .store(Arc::new(BufferData { buffer, frequency }));
         self.pos.store(0.0f64.to_bits(), Ordering::SeqCst);

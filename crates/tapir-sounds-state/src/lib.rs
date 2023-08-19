@@ -1,6 +1,6 @@
 #![deny(clippy::all)]
 
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, PartialOrd, Ord)]
 pub struct Id(uuid::Uuid);
@@ -107,8 +107,8 @@ impl State {
         self.dirty = false;
     }
 
-    pub fn calculate(&self) -> HashMap<Id, Vec<f64>> {
-        let mut calculation: HashMap<Id, Vec<f64>> = HashMap::with_capacity(self.blocks.len());
+    pub fn calculate(&self) -> HashMap<Id, Arc<[f64]>> {
+        let mut calculation: HashMap<Id, Arc<[f64]>> = HashMap::with_capacity(self.blocks.len());
 
         let sorted_blocks = petgraph::algo::toposort(&self.graph(), None)
             .expect("There shouldn't be a cycle because we check on addition");
@@ -121,14 +121,13 @@ impl State {
                 .map(|i| {
                     self.connections
                         .get(&(block.id(), i))
-                        .and_then(|connection| calculation.get(connection))
-                        .map(|data| data.as_slice())
+                        .and_then(|connection| calculation.get(connection).cloned())
                 })
                 .collect::<Vec<_>>();
 
             let mut block_result = block.calculate(self.frequency, &input_data);
             if block_result.is_empty() {
-                block_result.push(0.0);
+                block_result = Arc::new([0.0]);
             }
 
             calculation.insert(block.id(), block_result);

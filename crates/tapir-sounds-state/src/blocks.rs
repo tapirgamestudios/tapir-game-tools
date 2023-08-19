@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap, rc::Rc};
+use std::{borrow::Cow, collections::HashMap, rc::Rc, sync::Arc};
 
 mod band_pass_filter;
 mod cross_fade;
@@ -133,7 +133,7 @@ impl Block {
         self.dirty = true;
     }
 
-    pub fn calculate(&self, global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64> {
+    pub fn calculate(&self, global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]> {
         self.block_type.calculate(global_frequency, inputs)
     }
 
@@ -164,7 +164,7 @@ pub trait BlockType: BlockClone + Send + Sync {
     fn name(&self) -> BlockName;
     fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]>;
     fn set_input(&mut self, index: usize, value: &Input);
-    fn calculate(&self, global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64>;
+    fn calculate(&self, global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]>;
 }
 
 impl Clone for Box<dyn BlockType> {

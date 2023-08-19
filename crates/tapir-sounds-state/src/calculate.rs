@@ -9,13 +9,13 @@ pub struct CalculationId(crate::Id);
 
 #[derive(Clone)]
 pub struct Calculation {
-    results: Arc<HashMap<crate::Id, Vec<f64>>>,
+    results: Arc<HashMap<crate::Id, Arc<[f64]>>>,
     id: CalculationId,
 }
 
 impl Calculation {
-    pub fn for_block(&self, block_id: crate::Id) -> Option<&Vec<f64>> {
-        self.results.get(&block_id)
+    pub fn for_block(&self, block_id: crate::Id) -> Option<Arc<[f64]>> {
+        self.results.get(&block_id).cloned()
     }
 
     pub fn id(&self) -> CalculationId {

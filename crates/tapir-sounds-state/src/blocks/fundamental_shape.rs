@@ -1,4 +1,4 @@
-use std::{borrow::Cow, f64::consts::PI, rc::Rc};
+use std::{borrow::Cow, f64::consts::PI, rc::Rc, sync::Arc};
 
 use super::{stretch_frequency_shift, BlockName, BlockType, Input};
 
@@ -113,7 +113,7 @@ impl BlockType for FundamentalShapeBlock {
         }
     }
 
-    fn calculate(&self, global_frequency: f64, inputs: &[Option<&[f64]>]) -> Vec<f64> {
+    fn calculate(&self, global_frequency: f64, inputs: &[Option<Arc<[f64]>>]) -> Arc<[f64]> {
         let periods = if self.periods == 0.0 {
             1.0
         } else {
@@ -128,6 +128,7 @@ impl BlockType for FundamentalShapeBlock {
             let frequency_at_i = self.base_frequency
                 * stretch_frequency_shift(
                     inputs[0]
+                        .clone()
                         .map(|frequency_input| frequency_input[i % frequency_input.len()])
                         .unwrap_or(0.0),
                 )
@@ -135,6 +136,7 @@ impl BlockType for FundamentalShapeBlock {
 
             let amplitude_at_i = (self.base_amplitude
                 * inputs[1]
+                    .clone()
                     .map(|amplitude_input| amplitude_input[i % amplitude_input.len()])
                     .unwrap_or(1.0))
             .clamp(-1.0, 1.0);
@@ -148,6 +150,6 @@ impl BlockType for FundamentalShapeBlock {
             );
         }
 
-        ret
+        ret.into()
     }
 }
