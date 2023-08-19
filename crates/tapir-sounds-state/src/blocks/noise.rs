@@ -49,7 +49,7 @@ impl BlockType for Noise {
         match (index, value) {
             (0, super::Input::Periods(new_time)) => {
                 if *new_time != 0.0 {
-                    self.time = *new_time;
+                    self.time = new_time.clamp(0.0, 5.0);
                 }
             }
             (1, super::Input::Amplitude(new_amplitude)) => {
