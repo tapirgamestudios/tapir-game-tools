@@ -64,32 +64,33 @@ impl BlockType for BandPassFilter {
             return vec![].into();
         }
 
-        let mut buffer: Vec<_> = input
-            .iter()
-            .map(rustfft::num_complex::Complex::from)
-            .collect();
-
-        let mut planner = rustfft::FftPlanner::new();
+        let mut planner = realfft::RealFftPlanner::<f64>::new();
         let fft = planner.plan_fft_forward(input.len());
-        fft.process(&mut buffer);
 
-        let lower_frequencies = (buffer.len() as f64 * self.lower_bound) as usize;
-        let upper_frequencies = (buffer.len() as f64 * self.upper_bound) as usize;
+        let mut input_data = input.to_vec();
+        let mut spectrum = fft.make_output_vec();
 
-        for (i, value) in buffer.iter_mut().enumerate() {
+        fft.process(&mut input_data, &mut spectrum).unwrap();
+
+        let lower_frequencies = (input.len() as f64 * self.lower_bound) as usize;
+        let upper_frequencies = (input.len() as f64 * self.upper_bound) as usize;
+
+        for (i, value) in spectrum.iter_mut().enumerate() {
             if i < lower_frequencies || i > upper_frequencies {
                 *value = 0.0.into();
             }
         }
 
         let inv_fft = planner.plan_fft_inverse(input.len());
-        inv_fft.process(&mut buffer);
 
-        let normalization_amount = 1.0 / (buffer.len() as f64) * self.base_amplitude;
+        let mut output_data = inv_fft.make_output_vec();
+        inv_fft.process(&mut spectrum, &mut output_data).unwrap();
 
-        buffer
+        let normalization_amount = 1.0 / (input.len() as f64) * self.base_amplitude;
+
+        output_data
             .iter()
-            .map(|complex| complex.re * normalization_amount)
+            .map(|value| value * normalization_amount)
             .collect()
     }
 }

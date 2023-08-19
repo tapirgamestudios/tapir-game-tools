@@ -9,6 +9,6 @@ edition = "2021"
 fastrand = "2.0"
 im = "15"
 petgraph = "0.6"
-rustfft = "6.1"
+realfft = "3.3"
 serde = { version = "1.0", features = ["derive", "rc"] }
 uuid = { version = "1.4.1", features = ["v4", "fast-rng", "serde"] }
