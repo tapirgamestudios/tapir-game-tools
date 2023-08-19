@@ -102,5 +102,15 @@ pub fn input(
             ui.label(name);
             None
         }),
+        tapir_sounds_state::Input::Recording(_) => {
+            ui.horizontal(|ui| {
+                drop_point_gap(ui);
+                if ui.button("Browse...").clicked() {
+                    println!("Open import dialog");
+                }
+            });
+
+            None
+        }
     }
 }

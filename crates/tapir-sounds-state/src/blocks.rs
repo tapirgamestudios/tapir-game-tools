@@ -8,6 +8,7 @@ mod dc_offset;
 mod fade;
 mod fundamental_shape;
 mod noise;
+mod recording;
 
 use serde::{Deserialize, Serialize};
 
@@ -20,11 +21,13 @@ use self::{
     fade::Fade,
     fundamental_shape::{FundamentalShapeBlock, FundamentalShapeType},
     noise::Noise,
+    recording::Recording,
 };
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize)]
 pub enum BlockCategory {
     Fundamental,
+    Input,
     Combine,
     Alter,
 }
@@ -69,6 +72,7 @@ impl BlockFactory {
         register_block!(Amplify);
         register_block!(DcOffset);
         register_block!(Cut);
+        register_block!(Recording);
 
         Self { creation_functions }
     }
@@ -116,6 +120,7 @@ pub enum Input {
     Amplitude(f64),
     Periods(f64),
     Input,
+    Recording(Arc<[f64]>),
 }
 
 impl Block {
