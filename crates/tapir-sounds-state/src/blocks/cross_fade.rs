@@ -1,3 +1,5 @@
+use std::{borrow::Cow, rc::Rc};
+
 #[derive(Clone)]
 pub struct CrossFade {
     left_amount: f64,
@@ -31,7 +33,7 @@ impl super::BlockType for CrossFade {
         Self::name()
     }
 
-    fn inputs(&self) -> Vec<(std::borrow::Cow<'static, str>, super::Input)> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, super::Input)]> {
         vec![
             ("Left".into(), super::Input::Amplitude(self.left_amount)),
             ("Cross".into(), super::Input::Amplitude(self.split)),
@@ -41,6 +43,7 @@ impl super::BlockType for CrossFade {
                 super::Input::Toggle(self.should_loop),
             ),
         ]
+        .into()
     }
 
     fn set_input(&mut self, index: usize, value: &super::Input) {

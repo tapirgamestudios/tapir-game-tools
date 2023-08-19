@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, rc::Rc};
 
 use super::{BlockName, BlockType};
 
@@ -33,7 +33,7 @@ impl BlockType for Noise {
         Self::name()
     }
 
-    fn inputs(&self) -> Vec<(Cow<'static, str>, super::Input)> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, super::Input)]> {
         vec![
             ("Time".into(), super::Input::Periods(self.time)),
             (
@@ -42,6 +42,7 @@ impl BlockType for Noise {
             ),
             ("Seed".into(), super::Input::Periods(self.seed)),
         ]
+        .into()
     }
 
     fn set_input(&mut self, index: usize, value: &super::Input) {

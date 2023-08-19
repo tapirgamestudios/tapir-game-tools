@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, rc::Rc};
 
 use super::BlockType;
 
@@ -31,11 +31,12 @@ impl BlockType for Fade {
         Self::name()
     }
 
-    fn inputs(&self) -> Vec<(Cow<'static, str>, super::Input)> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, super::Input)]> {
         vec![
             ("Amplitude".into(), super::Input::Amplitude(self.amplitude)),
             ("Offset".into(), super::Input::Periods(self.offset)),
         ]
+        .into()
     }
 
     fn set_input(&mut self, index: usize, value: &super::Input) {

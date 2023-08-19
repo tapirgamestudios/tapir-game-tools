@@ -1,4 +1,4 @@
-use std::{borrow::Cow, f64::consts::PI};
+use std::{borrow::Cow, f64::consts::PI, rc::Rc};
 
 use super::{stretch_frequency_shift, BlockName, BlockType, Input};
 
@@ -83,13 +83,14 @@ impl BlockType for FundamentalShapeBlock {
         }
     }
 
-    fn inputs(&self) -> Vec<(Cow<'static, str>, Input)> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]> {
         vec![
             ("Frequency".into(), Input::Frequency(self.base_frequency)),
             ("Amplitude".into(), Input::Amplitude(self.base_amplitude)),
             ("Periods".into(), Input::Periods(self.periods)),
             ("Offset".into(), Input::Periods(self.offset)),
         ]
+        .into()
     }
 
     fn set_input(&mut self, index: usize, value: &Input) {

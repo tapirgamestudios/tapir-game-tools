@@ -1,3 +1,5 @@
+use std::{borrow::Cow, rc::Rc};
+
 use serde::{Deserialize, Serialize};
 
 use super::blocks::BlockName;
@@ -6,7 +8,7 @@ use super::blocks::BlockName;
 struct PersistedBlock {
     id: uuid::Uuid,
     name: BlockName,
-    inputs: Vec<super::Input>,
+    inputs: Rc<[(Cow<'static, str>, super::Input)]>,
     x: f32,
     y: f32,
 }
@@ -18,7 +20,7 @@ impl PersistedBlock {
         Self {
             id: block.id().0,
             name: block.name(),
-            inputs: block.inputs().into_iter().map(|(_, input)| input).collect(),
+            inputs: block.inputs().clone(),
             x: block_pos.0,
             y: block_pos.1,
         }
@@ -28,7 +30,7 @@ impl PersistedBlock {
         let mut block =
             block_factory.make_block_with_id(&self.name, (self.x, self.y), super::Id(self.id));
         for (index, input) in self.inputs.iter().enumerate() {
-            block.set_input(index, input);
+            block.set_input(index, &input.1);
         }
 
         block
@@ -37,8 +39,8 @@ impl PersistedBlock {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PersistedState {
-    blocks: Vec<PersistedBlock>,
-    connections: Vec<(uuid::Uuid, uuid::Uuid, usize)>,
+    blocks: Rc<[PersistedBlock]>,
+    connections: Rc<[(uuid::Uuid, uuid::Uuid, usize)]>,
     frequency: f64,
     selected_block: Option<uuid::Uuid>,
     should_loop: bool,
@@ -56,8 +58,8 @@ impl PersistedState {
         connections.sort();
 
         Self {
-            blocks,
-            connections,
+            blocks: blocks.into(),
+            connections: connections.into(),
             frequency: state.frequency,
             selected_block: state.selected_block().map(|id| id.0),
             should_loop: state.should_loop(),
@@ -67,11 +69,11 @@ impl PersistedState {
     pub fn to_state(&self, block_factory: &super::BlockFactory) -> super::State {
         let mut result = super::State::default();
 
-        for block in &self.blocks {
+        for block in self.blocks.iter() {
             result.add_block(block.to_block(block_factory));
         }
 
-        for (output_id, input_id, index) in &self.connections {
+        for (output_id, input_id, index) in self.connections.iter() {
             result.add_connection((super::Id(*output_id), (super::Id(*input_id), *index)));
         }
 

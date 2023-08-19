@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, rc::Rc};
 
 use super::{BlockName, BlockType, Input};
 
@@ -33,12 +33,13 @@ impl BlockType for BandPassFilter {
         Self::name()
     }
 
-    fn inputs(&self) -> Vec<(Cow<'static, str>, Input)> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]> {
         vec![
             ("Amplitude".into(), Input::Amplitude(self.base_amplitude)),
             ("Lower bound".into(), Input::Periods(self.lower_bound)),
             ("Upper bound".into(), Input::Periods(self.upper_bound)),
         ]
+        .into()
     }
 
     fn set_input(&mut self, index: usize, value: &Input) {
