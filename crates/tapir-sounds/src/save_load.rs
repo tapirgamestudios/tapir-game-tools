@@ -1,4 +1,4 @@
-use std::{fs, path::Path};
+use std::{fs, path::Path, sync::Arc};
 
 pub fn save(state: &tapir_sounds_state::State, filepath: &Path) -> anyhow::Result<()> {
     let persisted_state = tapir_sounds_state::persistance::PersistedState::new_from_state(state);
@@ -36,4 +36,26 @@ pub fn export(filepath: &Path, data: &[f64], frequency: f64) -> anyhow::Result<(
     writer.finalize()?;
 
     Ok(())
+}
+
+pub fn import(filepath: &Path) -> anyhow::Result<Arc<[f64]>> {
+    let mut wav_file = hound::WavReader::open(filepath)?;
+
+    let samples = match wav_file.spec().sample_format {
+        hound::SampleFormat::Float => wav_file
+            .samples::<f32>()
+            .map(|sample| Ok(sample? as f64))
+            .collect::<Result<_, hound::Error>>()?,
+        hound::SampleFormat::Int => {
+            let bits_per_sample = wav_file.spec().bits_per_sample as u32;
+            let max = 2usize.pow(bits_per_sample - 1) as f64;
+
+            wav_file
+                .samples::<i32>()
+                .map(|sample| Ok(sample? as f64 / max))
+                .collect::<Result<_, hound::Error>>()?
+        }
+    };
+
+    Ok(samples)
 }

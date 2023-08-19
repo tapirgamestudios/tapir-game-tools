@@ -18,23 +18,28 @@ fn drop_point_gap(ui: &mut egui::Ui) {
     ui.add_space(ui.spacing().interact_size.x + ui.spacing().item_spacing.x);
 }
 
+pub struct InputResponse {
+    pub recording_target: Option<usize>,
+    pub input_alteration: Option<tapir_sounds_state::Input>,
+}
+
 pub fn input(
     ui: &mut egui::Ui,
     name: &str,
     input: &tapir_sounds_state::Input,
     block_id: tapir_sounds_state::Id,
     index: usize,
-) -> Option<tapir_sounds_state::Input> {
-    match input {
+) -> InputResponse {
+    let input = match input {
         tapir_sounds_state::Input::Toggle(toggled) => {
             drop_point_gap(ui);
             let mut toggled = *toggled;
 
             if ui.checkbox(&mut toggled, name).changed() {
-                return Some(tapir_sounds_state::Input::Toggle(toggled));
+                Some(tapir_sounds_state::Input::Toggle(toggled))
+            } else {
+                None
             }
-
-            None
         }
         tapir_sounds_state::Input::Frequency(frequency) => {
             let mut frequency = *frequency;
@@ -103,14 +108,29 @@ pub fn input(
             None
         }),
         tapir_sounds_state::Input::Recording(_) => {
-            ui.horizontal(|ui| {
-                drop_point_gap(ui);
-                if ui.button("Browse...").clicked() {
-                    println!("Open import dialog");
-                }
-            });
-
-            None
+            if let Some(input_response) = ui
+                .horizontal(|ui| {
+                    drop_point_gap(ui);
+                    if ui.button("Browse...").clicked() {
+                        Some(InputResponse {
+                            recording_target: Some(index),
+                            input_alteration: None,
+                        })
+                    } else {
+                        None
+                    }
+                })
+                .inner
+            {
+                return input_response;
+            } else {
+                None
+            }
         }
+    };
+
+    InputResponse {
+        recording_target: None,
+        input_alteration: input,
     }
 }

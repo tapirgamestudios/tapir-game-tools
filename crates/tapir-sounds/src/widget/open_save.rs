@@ -7,6 +7,7 @@ enum SaveState {
     Open,
     SaveAs,
     Export,
+    Import,
 }
 
 pub struct OpenSave {
@@ -51,7 +52,7 @@ impl OpenSave {
     pub fn open_as(&mut self) {
         let file_path = self.file_path.clone();
         self.open_file_dialog
-            .get_or_insert_with(|| (Self::open_dialog(file_path), SaveState::Open));
+            .get_or_insert_with(|| (Self::open_dialog(file_path, "Open"), SaveState::Open));
     }
 
     pub fn save_as(&mut self) {
@@ -61,11 +62,17 @@ impl OpenSave {
             .get_or_insert_with(|| (Self::save_dialog(file_path, "Save As"), SaveState::SaveAs));
     }
 
-    fn open_dialog(path: Option<PathBuf>) -> egui_file::FileDialog {
+    pub fn import_as(&mut self) {
+        self.open_file_dialog
+            .get_or_insert_with(|| (Self::open_dialog(None, "Import WAV"), SaveState::Import));
+    }
+
+    fn open_dialog(path: Option<PathBuf>, title: &str) -> egui_file::FileDialog {
         let mut dialog = egui_file::FileDialog::open_file(
             path.clone()
                 .and_then(|path| path.parent().map(|parent| parent.to_owned())),
-        );
+        )
+        .title(title);
 
         if let Some(path) = path {
             if let Some(filename) = path.file_name() {
@@ -132,6 +139,7 @@ impl OpenSave {
                         OpenSaveResponse::Save(new_file_path)
                     }
                     SaveState::Export => OpenSaveResponse::Export(path.with_extension("wav")),
+                    SaveState::Import => OpenSaveResponse::Import(path),
                 }
             }
             Some((None, _)) => {
@@ -148,4 +156,5 @@ pub enum OpenSaveResponse {
     Open(PathBuf),
     Save(PathBuf),
     Export(PathBuf),
+    Import(PathBuf),
 }

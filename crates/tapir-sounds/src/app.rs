@@ -32,6 +32,7 @@ pub struct TapirSoundApp {
     midi: Option<midi::Midi>,
 
     open_save: open_save::OpenSave,
+    import_target: Option<(tapir_sounds_state::Id, usize)>,
 }
 
 impl TapirSoundApp {
@@ -82,6 +83,7 @@ impl TapirSoundApp {
             midi,
 
             open_save: open_save::OpenSave::new(file_path.clone()),
+            import_target: None,
         };
 
         if let Some(file_path) = file_path {
@@ -241,6 +243,11 @@ impl eframe::App for TapirSoundApp {
                     self.state.remove_block(*id);
                     self.open_save.mark_dirty();
                 }
+
+                if let Some(import_target) = response.import_target {
+                    self.import_target = Some((*id, import_target));
+                    self.open_save.import_as();
+                }
             }
 
             let mut cable_ui = ui.child_ui(ui.max_rect(), *ui.layout());
@@ -305,6 +312,21 @@ impl eframe::App for TapirSoundApp {
             open_save::OpenSaveResponse::Open(path) => self.open(&path),
             open_save::OpenSaveResponse::Save(path) => self.save(&path),
             open_save::OpenSaveResponse::Export(path) => self.export(&path),
+            open_save::OpenSaveResponse::Import(path) => match save_load::import(&path) {
+                Ok(data) => {
+                    let import_target = self.import_target.unwrap();
+                    if let Some(block) = self.state.get_block_mut(import_target.0) {
+                        block.set_input(
+                            import_target.1,
+                            &tapir_sounds_state::Input::Recording(data),
+                        );
+                        self.open_save.mark_dirty();
+                    };
+                }
+                Err(e) => {
+                    self.toasts.error(e.to_string());
+                }
+            },
         }
 
         self.toasts.show(ctx);

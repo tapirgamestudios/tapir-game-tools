@@ -9,6 +9,8 @@ pub struct BlockResponse {
     pub delete: bool,
     pub selected: bool,
     pub drag_delta: egui::Vec2,
+
+    pub import_target: Option<usize>,
 }
 
 pub fn block(
@@ -20,6 +22,7 @@ pub fn block(
     let mut alter_input = vec![];
 
     let mut delete = false;
+    let mut import_target = None;
 
     let response = draggable_block(ui, block.id(), is_selected, |ui| {
         ui.horizontal(|ui| {
@@ -37,8 +40,12 @@ pub fn block(
             for (index, (input_name, input_value)) in inputs.iter().enumerate() {
                 let response = widget::input(ui, input_name, input_value, block.id(), index);
 
-                if let Some(change) = response {
+                if let Some(change) = response.input_alteration {
                     alter_input.push((index, change));
+                }
+
+                if let Some(recording_target) = response.recording_target {
+                    import_target = Some(recording_target);
                 }
             }
         });
@@ -49,6 +56,7 @@ pub fn block(
         delete,
         selected: response.response.double_clicked(),
         drag_delta: response.response.drag_delta(),
+        import_target,
     }
 }
 
