@@ -128,7 +128,7 @@ impl State {
         let sorted_blocks = petgraph::algo::toposort(&self.graph(), None)
             .expect("There shouldn't be a cycle because we check on addition");
 
-        let sorted_blocks = sorted_blocks.iter().map(|id| self.blocks.get(id).unwrap());
+        let sorted_blocks = sorted_blocks.iter().filter_map(|id| self.blocks.get(id));
 
         for block in sorted_blocks {
             let n_inputs = block.inputs().len();
@@ -185,10 +185,7 @@ impl State {
     }
 
     pub fn remove_block(&mut self, id: Id) {
-        if self.blocks.remove(&id).is_none() {
-            return;
-        };
-
+        self.blocks.remove(&id);
         self.connections
             .retain(|(input_id, _), output_id| input_id != &id && output_id != &id);
 
