@@ -5,15 +5,19 @@ pub struct Undoer<State> {
     pointer: usize,
     time_between_states: Duration,
     last_insert: f64,
+
+    max_states: usize,
 }
 
 impl<State> Undoer<State> {
     pub fn new(time_between_states: Duration) -> Self {
         Self {
-            undos: Default::default(),
+            undos: VecDeque::with_capacity(100),
             pointer: 0,
             time_between_states,
             last_insert: 0.0,
+
+            max_states: 100,
         }
     }
 
@@ -30,6 +34,11 @@ impl<State> Undoer<State> {
     }
 
     pub fn add_undo(&mut self, current_state: State) {
+        if self.undos.len() >= self.max_states {
+            self.undos.pop_front();
+            self.pointer -= 1;
+        }
+
         self.undos.truncate(self.pointer + 1);
         self.pointer = self.undos.len();
         self.undos.push_back(current_state);
