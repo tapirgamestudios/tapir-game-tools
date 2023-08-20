@@ -45,7 +45,22 @@ impl Default for State {
     }
 }
 
+impl PartialEq for State {
+    fn eq(&self, other: &Self) -> bool {
+        self.blocks.ptr_eq(&other.blocks)
+            && self.connections.ptr_eq(&other.connections)
+            && self.frequency == other.frequency
+            && self.selected_block == other.selected_block
+            // && self.dirty == other.dirty - don't check dirty
+            && self.should_loop == other.should_loop
+    }
+}
+
 impl State {
+    pub fn mark_dirty(&mut self) {
+        self.dirty = true;
+    }
+
     pub fn is_dirty(&self) -> bool {
         self.dirty || self.blocks.iter().any(|(_, block)| block.is_dirty())
     }

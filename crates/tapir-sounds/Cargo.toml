@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 tapir-cables = { path = "../tapir-cables" }
 tapir-sounds-state = { path = "../tapir-sounds-state" }
+tapir-undo = { path = "../tapir-undo" }
 
 anyhow = "1.0"
 arc-swap = "1.6.0"

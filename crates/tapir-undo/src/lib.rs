@@ -70,15 +70,19 @@ impl<State: Clone + PartialEq> Undoer<State> {
             None => {
                 // always put something here
                 self.add_undo(current_state.clone());
+                self.last_insert = current_time;
             }
 
             Some(latest_undo) => {
                 if latest_undo.eq(current_state) {
-                    self.last_insert = current_time;
+                    return;
                 }
 
                 if current_time - self.last_insert > self.time_between_states.as_secs_f64() {
                     self.add_undo(current_state.clone());
+                    self.last_insert = current_time;
+                } else {
+                    self.undos[self.pointer] = current_state.clone();
                 }
             }
         }

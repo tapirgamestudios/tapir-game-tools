@@ -2505,6 +2505,7 @@ dependencies = [
  "ron",
  "tapir-cables",
  "tapir-sounds-state",
+ "tapir-undo",
 ]
 
 [[package]]

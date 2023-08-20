@@ -16,6 +16,7 @@ use tapir_sounds_state::calculate;
 
 pub struct TapirSoundApp {
     state: tapir_sounds_state::State,
+    undoer: tapir_undo::Undoer<tapir_sounds_state::State>,
 
     calculator: calculate::Calculator,
     last_updated_audio_id: Option<calculate::CalculationId>,
@@ -71,6 +72,8 @@ impl TapirSoundApp {
 
         let mut app = Self {
             state: Default::default(),
+            undoer: tapir_undo::Undoer::new(Duration::from_secs(4)),
+
             calculator: Default::default(),
             block_factory: tapir_sounds_state::BlockFactory::new(),
             pan: Default::default(),
@@ -131,6 +134,7 @@ impl eframe::App for TapirSoundApp {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
                 self.file_menu(ui, ctx, frame);
+                self.edit_menu(ui, ctx);
             });
         });
 
@@ -330,6 +334,7 @@ impl eframe::App for TapirSoundApp {
         }
 
         self.toasts.show(ctx);
+        self.undoer.feed_state(ctx.input(|i| i.time), &self.state);
     }
 }
 
@@ -391,6 +396,46 @@ impl TapirSoundApp {
                 ui.close_menu();
             }
         });
+    }
+
+    fn edit_menu(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::Z)) {
+            self.undo();
+        }
+
+        if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::Y)) {
+            self.redo();
+        }
+
+        ui.menu_button("Edit", |ui| {
+            if ui
+                .add_enabled(self.undoer.has_undo(), egui::Button::new("Undo"))
+                .clicked()
+            {
+                self.undo();
+            }
+
+            if ui
+                .add_enabled(self.undoer.has_redo(), egui::Button::new("Redo"))
+                .clicked()
+            {
+                self.redo();
+            }
+        });
+    }
+
+    fn undo(&mut self) {
+        if let Some(new_state) = self.undoer.undo() {
+            self.state = new_state.clone();
+            self.state.mark_dirty();
+        }
+    }
+
+    fn redo(&mut self) {
+        if let Some(new_state) = self.undoer.redo() {
+            self.state = new_state.clone();
+            self.state.mark_dirty();
+        }
     }
 
     fn save_as(&mut self) {
