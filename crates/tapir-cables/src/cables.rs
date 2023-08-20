@@ -72,6 +72,8 @@ pub fn cables<BlockId: crate::BlockId + 'static>(
         crate::CableState::<BlockId>::from_ctx(ui.ctx(), |state| state.clear_in_progress_cable());
     }
 
+    crate::CableState::<BlockId>::from_ctx(ui.ctx(), |state| state.clear_port_positions());
+
     CableResponse { new_connection }
 }
 

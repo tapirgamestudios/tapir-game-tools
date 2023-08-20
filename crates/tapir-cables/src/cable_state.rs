@@ -33,6 +33,10 @@ impl<BlockId: crate::BlockId + 'static> CableState<BlockId> {
             .insert(port_id.clone(), position);
     }
 
+    pub fn clear_port_positions(&mut self) {
+        self.inner.lock().unwrap().port_positions.clear();
+    }
+
     pub fn get_port_position(&self, port_id: &PortId<BlockId>) -> Option<egui::Pos2> {
         self.inner
             .lock()
@@ -54,13 +58,16 @@ impl<BlockId: crate::BlockId + 'static> CableState<BlockId> {
         self.inner.lock().unwrap().in_progress_cable = None;
     }
 
-    pub fn in_progress_cable(&self) -> Option<(egui::Pos2, PortId<BlockId>)> {
-        let inner = self.inner.lock().unwrap();
+    pub fn in_progress_cable(&mut self) -> Option<(egui::Pos2, PortId<BlockId>)> {
+        let mut inner = self.inner.lock().unwrap();
         let in_progress_cable = inner.in_progress_cable.as_ref()?;
 
-        let pos = inner.port_positions.get(in_progress_cable)?;
+        let Some(pos) = inner.port_positions.get(in_progress_cable).cloned() else {
+            inner.in_progress_cable = None;
+            return None;
+        };
 
-        Some((*pos, in_progress_cable.clone()))
+        Some((pos, in_progress_cable.clone()))
     }
 
     pub fn closest_port_at_pos(&self, pos: egui::Pos2) -> Option<(PortId<BlockId>, egui::Pos2)> {
