@@ -8,6 +8,7 @@ mod dc_offset;
 mod fade;
 mod fundamental_shape;
 mod noise;
+mod pitch_shift;
 mod recording;
 
 use serde::{Deserialize, Serialize};
@@ -21,6 +22,7 @@ use self::{
     fade::Fade,
     fundamental_shape::{FundamentalShapeBlock, FundamentalShapeType},
     noise::Noise,
+    pitch_shift::PitchShift,
     recording::Recording,
 };
 
@@ -73,6 +75,7 @@ impl BlockFactory {
         register_block!(DcOffset);
         register_block!(Cut);
         register_block!(Recording);
+        register_block!(PitchShift);
 
         Self { creation_functions }
     }
