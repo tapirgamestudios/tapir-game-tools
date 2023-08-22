@@ -20,7 +20,7 @@ impl Default for Fade {
 impl Fade {
     pub fn name() -> BlockName {
         BlockName {
-            category: BlockCategory::Combine,
+            category: BlockCategory::Alter,
             name: "Fade".to_owned(),
         }
     }
