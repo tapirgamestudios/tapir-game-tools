@@ -1,6 +1,6 @@
 use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-use super::BlockType;
+use super::{BlockCategory, BlockName, BlockType, Input};
 
 #[derive(Clone)]
 pub struct DcOffset {
@@ -14,26 +14,26 @@ impl Default for DcOffset {
 }
 
 impl DcOffset {
-    pub fn name() -> super::BlockName {
-        super::BlockName {
-            category: super::BlockCategory::Alter,
+    pub fn name() -> BlockName {
+        BlockName {
+            category: BlockCategory::Alter,
             name: "DC Offset".to_owned(),
         }
     }
 }
 
 impl BlockType for DcOffset {
-    fn name(&self) -> super::BlockName {
+    fn name(&self) -> BlockName {
         Self::name()
     }
 
-    fn inputs(&self) -> Rc<[(Cow<'static, str>, super::Input)]> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]> {
         vec![("New Offset".into(), super::Input::Amplitude(self.offset))].into()
     }
 
-    fn set_input(&mut self, index: usize, value: &super::Input) {
+    fn set_input(&mut self, index: usize, value: &Input) {
         match (index, value) {
-            (0, super::Input::Amplitude(new_offset)) => {
+            (0, Input::Amplitude(new_offset)) => {
                 self.offset = new_offset.clamp(-1.0, 1.0);
             }
             _ => panic!("Invalid input {index} {value:?}"),
