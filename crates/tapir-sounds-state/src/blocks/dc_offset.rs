@@ -28,7 +28,7 @@ impl BlockType for DcOffset {
     }
 
     fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]> {
-        vec![("New Offset".into(), super::Input::Amplitude(self.offset))].into()
+        vec![("New Offset".into(), Input::Amplitude(self.offset))].into()
     }
 
     fn set_input(&mut self, index: usize, value: &Input) {

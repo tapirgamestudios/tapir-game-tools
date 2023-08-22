@@ -10,6 +10,7 @@ mod fundamental_shape;
 mod noise;
 mod pitch_shift;
 mod recording;
+mod repeat;
 
 use serde::{Deserialize, Serialize};
 
@@ -24,6 +25,7 @@ use self::{
     noise::Noise,
     pitch_shift::PitchShift,
     recording::Recording,
+    repeat::Repeat,
 };
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize)]
@@ -76,6 +78,7 @@ impl BlockFactory {
         register_block!(Cut);
         register_block!(Recording);
         register_block!(PitchShift);
+        register_block!(Repeat);
 
         Self { creation_functions }
     }
