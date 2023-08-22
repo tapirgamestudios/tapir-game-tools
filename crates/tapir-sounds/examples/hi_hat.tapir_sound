@@ -17,7 +17,7 @@
         (
             id: "b5ff7815-972c-4359-aafd-079c0699bd58",
             name: (
-                category: Combine,
+                category: Alter,
                 name: "Fade",
             ),
             inputs: [

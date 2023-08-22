@@ -77,7 +77,7 @@
         (
             id: "560836ca-f9ef-4e8d-99e4-9ae5852b6c56",
             name: (
-                category: Combine,
+                category: Alter,
                 name: "Crossfade",
             ),
             inputs: [
