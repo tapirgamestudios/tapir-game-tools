@@ -5,6 +5,7 @@ mod band_pass_filter;
 mod cross_fade;
 mod cut;
 mod dc_offset;
+mod delay;
 mod fade;
 mod fundamental_shape;
 mod noise;
@@ -20,6 +21,7 @@ use self::{
     cross_fade::CrossFade,
     cut::Cut,
     dc_offset::DcOffset,
+    delay::Delay,
     fade::Fade,
     fundamental_shape::{FundamentalShapeBlock, FundamentalShapeType},
     noise::Noise,
@@ -79,6 +81,7 @@ impl BlockFactory {
         register_block!(Recording);
         register_block!(PitchShift);
         register_block!(Repeat);
+        register_block!(Delay);
 
         Self { creation_functions }
     }
