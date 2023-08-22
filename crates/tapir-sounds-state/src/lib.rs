@@ -69,6 +69,11 @@ impl State {
         self.frequency
     }
 
+    pub fn set_frequency(&mut self, new_frequency: f64) {
+        self.frequency = new_frequency.clamp(1000.0, 100_000.0);
+        self.mark_dirty();
+    }
+
     pub fn add_connection(
         &mut self,
         (output_block, (input_block, input_block_index)): (Id, (Id, usize)),

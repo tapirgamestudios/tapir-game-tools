@@ -86,6 +86,7 @@ impl PersistedState {
         }
 
         result.set_should_loop(self.should_loop);
+        result.set_frequency(self.frequency);
 
         result
     }
