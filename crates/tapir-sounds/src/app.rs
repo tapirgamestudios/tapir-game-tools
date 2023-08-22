@@ -129,20 +129,31 @@ impl TapirSoundApp {
     }
 
     fn frequency_input_box(&mut self, ctx: &egui::Context, ui: &mut egui::Ui) {
+        ui.label("Frequency:");
+
         let input_id = egui::Id::new("frequency_input");
         let current_frequency = self.state.frequency();
-        let mut frequency = ctx.data_mut(|data| {
-            data.get_temp_mut_or_insert_with::<String>(input_id, || current_frequency.to_string())
-                .clone()
+        let (mut frequency, stored_frequency) = ctx.data_mut(|data| {
+            data.get_temp_mut_or_insert_with::<(String, f64)>(input_id, || {
+                (current_frequency.to_string(), current_frequency)
+            })
+            .clone()
         });
 
-        if ui.text_edit_singleline(&mut frequency).lost_focus() {
+        if stored_frequency != current_frequency {
+            frequency = current_frequency.to_string();
+        }
+
+        if ui
+            .add(egui::TextEdit::singleline(&mut frequency).desired_width(50.0))
+            .lost_focus()
+        {
             if let Ok(new_frequency) = frequency.parse() {
                 self.state.set_frequency(new_frequency);
             }
         }
 
-        ctx.data_mut(|data| data.insert_temp(input_id, frequency));
+        ctx.data_mut(|data| data.insert_temp(input_id, (frequency, current_frequency)));
     }
 }
 
