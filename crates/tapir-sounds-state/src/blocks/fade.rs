@@ -1,6 +1,6 @@
 use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-use super::BlockType;
+use super::{BlockCategory, BlockName, BlockType, Input};
 
 #[derive(Clone)]
 pub struct Fade {
@@ -18,33 +18,33 @@ impl Default for Fade {
 }
 
 impl Fade {
-    pub fn name() -> super::BlockName {
-        super::BlockName {
-            category: super::BlockCategory::Combine,
+    pub fn name() -> BlockName {
+        BlockName {
+            category: BlockCategory::Combine,
             name: "Fade".to_owned(),
         }
     }
 }
 
 impl BlockType for Fade {
-    fn name(&self) -> super::BlockName {
+    fn name(&self) -> BlockName {
         Self::name()
     }
 
-    fn inputs(&self) -> Rc<[(Cow<'static, str>, super::Input)]> {
+    fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]> {
         vec![
-            ("Amplitude".into(), super::Input::Amplitude(self.amplitude)),
-            ("Offset".into(), super::Input::Periods(self.offset)),
+            ("Amplitude".into(), Input::Amplitude(self.amplitude)),
+            ("Offset".into(), Input::Periods(self.offset)),
         ]
         .into()
     }
 
-    fn set_input(&mut self, index: usize, value: &super::Input) {
+    fn set_input(&mut self, index: usize, value: &Input) {
         match (index, value) {
-            (0, super::Input::Amplitude(new_amplitude)) => {
+            (0, Input::Amplitude(new_amplitude)) => {
                 self.amplitude = *new_amplitude;
             }
-            (1, super::Input::Periods(new_offset)) => {
+            (1, Input::Periods(new_offset)) => {
                 self.offset = new_offset.clamp(0.0, 1.0);
             }
             _ => panic!("Invalid input {index} {value:?}"),
