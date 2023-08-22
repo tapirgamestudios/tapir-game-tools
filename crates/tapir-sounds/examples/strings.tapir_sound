@@ -1,0 +1,340 @@
+(
+    blocks: [
+        (
+            id: "05915666-9fab-4cc9-b82a-00d19bb0531d",
+            name: (
+                category: Combine,
+                name: "Fade",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.0),
+            ],
+            x: 2344.7637,
+            y: -170.63898,
+        ),
+        (
+            id: "1c08eb68-e65f-4b0a-97d8-614f0c7847e9",
+            name: (
+                category: Combine,
+                name: "Combine",
+            ),
+            inputs: [
+                Periods(4.0),
+                Toggle(false),
+                Amplitude(1.0),
+                Amplitude(0.83),
+                Amplitude(0.56),
+                Amplitude(0.43),
+            ],
+            x: 396.08032,
+            y: -207.19147,
+        ),
+        (
+            id: "2af9a59f-f1e2-44a6-a91c-ef715a3671e5",
+            name: (
+                category: Fundamental,
+                name: "Sine",
+            ),
+            inputs: [
+                Frequency(660.0),
+                Amplitude(0.5),
+                Periods(1.0),
+                Periods(0.0),
+            ],
+            x: -728.27924,
+            y: 88.23175,
+        ),
+        (
+            id: "2ee2440e-dfad-48ba-add9-b4eb98a409fc",
+            name: (
+                category: Alter,
+                name: "Delay",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.02),
+            ],
+            x: -104.55859,
+            y: 74.60571,
+        ),
+        (
+            id: "4e2f4dbb-65f7-4b7a-9670-f41b93ba2bf0",
+            name: (
+                category: Fundamental,
+                name: "Sine",
+            ),
+            inputs: [
+                Frequency(220.0),
+                Amplitude(0.5),
+                Periods(1.0),
+                Periods(0.0),
+            ],
+            x: -757.40186,
+            y: -351.0546,
+        ),
+        (
+            id: "4e706a2f-4952-4bdc-b5a4-5edb9adcc4dc",
+            name: (
+                category: Alter,
+                name: "Pitch Shift",
+            ),
+            inputs: [
+                Input,
+                Amplitude(0.0),
+                Periods(0.0),
+            ],
+            x: 823.5574,
+            y: -244.97235,
+        ),
+        (
+            id: "5248698a-d0ac-46c9-858e-b5eb1d6e711f",
+            name: (
+                category: Alter,
+                name: "Repeat",
+            ),
+            inputs: [
+                Input,
+                Periods(1.0),
+                Toggle(true),
+            ],
+            x: -408.24463,
+            y: -115.542725,
+        ),
+        (
+            id: "52deebed-a796-4e47-bd64-eef4f299c8f5",
+            name: (
+                category: Alter,
+                name: "Amplify",
+            ),
+            inputs: [
+                Amplitude(1.0),
+            ],
+            x: 1214.8599,
+            y: -234.70233,
+        ),
+        (
+            id: "52f3b8ed-8f17-44dd-b95e-552f30510bc4",
+            name: (
+                category: Alter,
+                name: "Amplify",
+            ),
+            inputs: [
+                Amplitude(1.0),
+            ],
+            x: 1983.8256,
+            y: -186.12238,
+        ),
+        (
+            id: "5ad13662-b76f-4535-9dc9-55136b9f1428",
+            name: (
+                category: Combine,
+                name: "Combine",
+            ),
+            inputs: [
+                Periods(3.0),
+                Toggle(false),
+                Amplitude(1.0),
+                Amplitude(0.5),
+                Amplitude(0.25),
+            ],
+            x: 1652.0809,
+            y: -209.53644,
+        ),
+        (
+            id: "7585f747-5851-4f2c-a5b8-d6a84767b339",
+            name: (
+                category: Alter,
+                name: "Repeat",
+            ),
+            inputs: [
+                Input,
+                Periods(1.0),
+                Toggle(true),
+            ],
+            x: -418.2917,
+            y: -327.8731,
+        ),
+        (
+            id: "7e5f4853-843d-48e7-8d38-f149b571a54f",
+            name: (
+                category: Fundamental,
+                name: "Sine",
+            ),
+            inputs: [
+                Frequency(880.0),
+                Amplitude(0.5),
+                Periods(1.0),
+                Periods(0.0),
+            ],
+            x: -720.6825,
+            y: 298.72906,
+        ),
+        (
+            id: "7e96c354-d737-4e88-9243-3a1459ea10c6",
+            name: (
+                category: Alter,
+                name: "Pitch Shift",
+            ),
+            inputs: [
+                Input,
+                Amplitude(0.005),
+                Periods(0.0),
+            ],
+            x: 947.8905,
+            y: -31.52887,
+        ),
+        (
+            id: "841364c4-5b6a-4f06-acc9-52ae1110a950",
+            name: (
+                category: Alter,
+                name: "Delay",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.02),
+            ],
+            x: 1264.0616,
+            y: 139.93298,
+        ),
+        (
+            id: "910418d8-3c41-48ea-9509-44404167babf",
+            name: (
+                category: Fundamental,
+                name: "Sine",
+            ),
+            inputs: [
+                Frequency(4.0),
+                Amplitude(0.005),
+                Periods(1.0),
+                Periods(0.0),
+            ],
+            x: 411.9958,
+            y: 135.83002,
+        ),
+        (
+            id: "923f0121-cd19-4e71-bba1-2c55edac13fe",
+            name: (
+                category: Fundamental,
+                name: "Sine",
+            ),
+            inputs: [
+                Frequency(440.0),
+                Amplitude(0.5),
+                Periods(1.0),
+                Periods(0.0),
+            ],
+            x: -745.98486,
+            y: -115.28229,
+        ),
+        (
+            id: "92b696f8-2162-44c2-a6ac-8128180fc867",
+            name: (
+                category: Alter,
+                name: "Delay",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.02),
+            ],
+            x: 1246.8275,
+            y: -28.862122,
+        ),
+        (
+            id: "9519393f-9632-47f6-b77b-5c32a9ee1e72",
+            name: (
+                category: Alter,
+                name: "Repeat",
+            ),
+            inputs: [
+                Input,
+                Periods(1.0),
+                Toggle(true),
+            ],
+            x: -407.74426,
+            y: 105.117065,
+        ),
+        (
+            id: "97b3c76a-57e3-42bc-81df-4fb0098c43b0",
+            name: (
+                category: Alter,
+                name: "Delay",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.02),
+            ],
+            x: -88.94446,
+            y: -91.91528,
+        ),
+        (
+            id: "b39b0cf1-c857-47e8-bfe1-cd34a8a9a7aa",
+            name: (
+                category: Alter,
+                name: "Pitch Shift",
+            ),
+            inputs: [
+                Input,
+                Amplitude(0.005),
+                Periods(0.0),
+            ],
+            x: 928.13586,
+            y: 154.00397,
+        ),
+        (
+            id: "dba96832-f006-4479-b247-3307fdd7a87a",
+            name: (
+                category: Alter,
+                name: "Repeat",
+            ),
+            inputs: [
+                Input,
+                Periods(1.0),
+                Toggle(true),
+            ],
+            x: -406.899,
+            y: 314.84253,
+        ),
+        (
+            id: "f2189df7-7559-46fa-af3f-478406739239",
+            name: (
+                category: Alter,
+                name: "Delay",
+            ),
+            inputs: [
+                Amplitude(1.0),
+                Periods(0.03),
+            ],
+            x: -72.11182,
+            y: 240.44562,
+        ),
+    ],
+    connections: [
+        ("1c08eb68-e65f-4b0a-97d8-614f0c7847e9", "4e706a2f-4952-4bdc-b5a4-5edb9adcc4dc", 0),
+        ("2af9a59f-f1e2-44a6-a91c-ef715a3671e5", "9519393f-9632-47f6-b77b-5c32a9ee1e72", 0),
+        ("2ee2440e-dfad-48ba-add9-b4eb98a409fc", "1c08eb68-e65f-4b0a-97d8-614f0c7847e9", 4),
+        ("4e2f4dbb-65f7-4b7a-9670-f41b93ba2bf0", "7585f747-5851-4f2c-a5b8-d6a84767b339", 0),
+        ("4e706a2f-4952-4bdc-b5a4-5edb9adcc4dc", "52deebed-a796-4e47-bd64-eef4f299c8f5", 0),
+        ("5248698a-d0ac-46c9-858e-b5eb1d6e711f", "97b3c76a-57e3-42bc-81df-4fb0098c43b0", 0),
+        ("52deebed-a796-4e47-bd64-eef4f299c8f5", "5ad13662-b76f-4535-9dc9-55136b9f1428", 2),
+        ("52deebed-a796-4e47-bd64-eef4f299c8f5", "7e96c354-d737-4e88-9243-3a1459ea10c6", 0),
+        ("52f3b8ed-8f17-44dd-b95e-552f30510bc4", "05915666-9fab-4cc9-b82a-00d19bb0531d", 0),
+        ("5ad13662-b76f-4535-9dc9-55136b9f1428", "52f3b8ed-8f17-44dd-b95e-552f30510bc4", 0),
+        ("7585f747-5851-4f2c-a5b8-d6a84767b339", "1c08eb68-e65f-4b0a-97d8-614f0c7847e9", 2),
+        ("7e5f4853-843d-48e7-8d38-f149b571a54f", "dba96832-f006-4479-b247-3307fdd7a87a", 0),
+        ("7e96c354-d737-4e88-9243-3a1459ea10c6", "92b696f8-2162-44c2-a6ac-8128180fc867", 0),
+        ("841364c4-5b6a-4f06-acc9-52ae1110a950", "5ad13662-b76f-4535-9dc9-55136b9f1428", 4),
+        ("910418d8-3c41-48ea-9509-44404167babf", "4e706a2f-4952-4bdc-b5a4-5edb9adcc4dc", 1),
+        ("923f0121-cd19-4e71-bba1-2c55edac13fe", "5248698a-d0ac-46c9-858e-b5eb1d6e711f", 0),
+        ("92b696f8-2162-44c2-a6ac-8128180fc867", "5ad13662-b76f-4535-9dc9-55136b9f1428", 3),
+        ("92b696f8-2162-44c2-a6ac-8128180fc867", "b39b0cf1-c857-47e8-bfe1-cd34a8a9a7aa", 0),
+        ("9519393f-9632-47f6-b77b-5c32a9ee1e72", "2ee2440e-dfad-48ba-add9-b4eb98a409fc", 0),
+        ("97b3c76a-57e3-42bc-81df-4fb0098c43b0", "1c08eb68-e65f-4b0a-97d8-614f0c7847e9", 3),
+        ("b39b0cf1-c857-47e8-bfe1-cd34a8a9a7aa", "841364c4-5b6a-4f06-acc9-52ae1110a950", 0),
+        ("dba96832-f006-4479-b247-3307fdd7a87a", "f2189df7-7559-46fa-af3f-478406739239", 0),
+        ("f2189df7-7559-46fa-af3f-478406739239", "1c08eb68-e65f-4b0a-97d8-614f0c7847e9", 5),
+    ],
+    frequency: 44100.0,
+    selected_block: Some("05915666-9fab-4cc9-b82a-00d19bb0531d"),
+    should_loop: true,
+)

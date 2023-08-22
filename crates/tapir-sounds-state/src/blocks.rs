@@ -2,6 +2,7 @@ use std::{borrow::Cow, collections::HashMap, rc::Rc, sync::Arc};
 
 mod amplify;
 mod band_pass_filter;
+mod combine;
 mod cross_fade;
 mod cut;
 mod dc_offset;
@@ -18,6 +19,7 @@ use serde::{Deserialize, Serialize};
 use self::{
     amplify::Amplify,
     band_pass_filter::BandPassFilter,
+    combine::Combine,
     cross_fade::CrossFade,
     cut::Cut,
     dc_offset::DcOffset,
@@ -82,6 +84,7 @@ impl BlockFactory {
         register_block!(PitchShift);
         register_block!(Repeat);
         register_block!(Delay);
+        register_block!(Combine);
 
         Self { creation_functions }
     }
