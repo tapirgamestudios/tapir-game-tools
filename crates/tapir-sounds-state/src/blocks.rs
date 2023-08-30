@@ -13,6 +13,7 @@ mod noise;
 mod pitch_shift;
 mod recording;
 mod repeat;
+mod square;
 
 use serde::{Deserialize, Serialize};
 
@@ -30,6 +31,7 @@ use self::{
     pitch_shift::PitchShift,
     recording::Recording,
     repeat::Repeat,
+    square::Square,
 };
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize)]
@@ -73,6 +75,7 @@ impl BlockFactory {
             };
         }
 
+        register_block!(Square);
         register_block!(Noise);
         register_block!(CrossFade);
         register_block!(Fade);

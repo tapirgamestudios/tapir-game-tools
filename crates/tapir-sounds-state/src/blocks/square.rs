@@ -1,77 +1,48 @@
-use std::{borrow::Cow, f64::consts::PI, rc::Rc, sync::Arc};
+use std::{borrow::Cow, rc::Rc, sync::Arc};
 
-use super::{stretch_frequency_shift, BlockName, BlockType, Input};
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum FundamentalShapeType {
-    Sine,
-    Triangle,
-    Saw,
-}
-
-impl FundamentalShapeType {
-    pub fn all() -> impl Iterator<Item = FundamentalShapeType> + 'static {
-        [Self::Sine, Self::Triangle, Self::Saw].into_iter()
-    }
-
-    pub fn name(self) -> &'static str {
-        match self {
-            Self::Sine => "Sine",
-            Self::Triangle => "Triangle",
-            Self::Saw => "Saw",
-        }
-    }
-
-    fn value(self, index: f64) -> f64 {
-        match self {
-            Self::Sine => (index * PI * 2.0).sin(),
-            Self::Triangle => {
-                if index < 0.25 {
-                    index * 4.0
-                } else if index < 0.75 {
-                    (index - 0.5) * -4.0
-                } else {
-                    (index - 0.75) * 4.0 - 1.0
-                }
-            }
-            Self::Saw => {
-                if index < 0.5 {
-                    index * 2.0
-                } else {
-                    index * 2.0 - 2.0
-                }
-            }
-        }
-    }
-}
+use super::{stretch_frequency_shift, BlockCategory, BlockName, BlockType, Input};
 
 #[derive(Clone)]
-pub struct FundamentalShapeBlock {
-    fundamental_shape_type: FundamentalShapeType,
+pub struct Square {
     periods: f64,
     base_frequency: f64,
     base_amplitude: f64,
     offset: f64,
+    duty_cycle: f64,
 }
 
-impl FundamentalShapeBlock {
-    pub fn new(fundamental_shape_type: FundamentalShapeType) -> Self {
-        Self {
-            fundamental_shape_type,
-            periods: 1.0,
-            base_frequency: 256.0,
-            base_amplitude: 0.5,
-            offset: 0.0,
+impl Square {
+    pub fn name() -> BlockName {
+        BlockName {
+            category: BlockCategory::Fundamental,
+            name: "Square".to_owned(),
+        }
+    }
+
+    fn value_at(&self, x: f64) -> f64 {
+        if x < self.duty_cycle {
+            -1.0
+        } else {
+            1.0
         }
     }
 }
 
-impl BlockType for FundamentalShapeBlock {
-    fn name(&self) -> BlockName {
-        BlockName {
-            category: super::BlockCategory::Fundamental,
-            name: self.fundamental_shape_type.name().to_owned(),
+impl Default for Square {
+    fn default() -> Self {
+        Self {
+            base_frequency: 256.0,
+            base_amplitude: 0.5,
+            periods: 1.0,
+            offset: 0.0,
+            duty_cycle: 0.5,
         }
+    }
+}
+
+impl BlockType for Square {
+    fn name(&self) -> BlockName {
+        Self::name()
     }
 
     fn inputs(&self) -> Rc<[(Cow<'static, str>, Input)]> {
@@ -80,6 +51,7 @@ impl BlockType for FundamentalShapeBlock {
             ("Amplitude".into(), Input::Amplitude(self.base_amplitude)),
             ("Periods".into(), Input::Periods(self.periods)),
             ("Offset".into(), Input::Periods(self.offset)),
+            ("Duty Cycle".into(), Input::Periods(self.duty_cycle)),
         ]
         .into()
     }
@@ -99,6 +71,9 @@ impl BlockType for FundamentalShapeBlock {
             }
             (3, Input::Periods(new_offset)) => {
                 self.offset = new_offset.clamp(0.0, 1.0);
+            }
+            (4, Input::Periods(new_duty_cycle)) => {
+                self.duty_cycle = new_duty_cycle.clamp(0.0, 1.0);
             }
             (name, value) => panic!("Invalid input {name} with value {value:?}"),
         }
@@ -135,8 +110,7 @@ impl BlockType for FundamentalShapeBlock {
             let period_length_at_i = global_frequency / frequency_at_i;
 
             ret.push(
-                self.fundamental_shape_type
-                    .value((i as f64 / period_length_at_i + self.offset).fract())
+                self.value_at((i as f64 / period_length_at_i + self.offset).fract())
                     * amplitude_at_i,
             );
         }
