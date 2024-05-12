@@ -22,7 +22,7 @@ impl<BlockId: crate::BlockId + 'static> CableState<BlockId> {
     where
         F: FnOnce(&mut Self) -> T,
     {
-        ctx.data_mut(|data| f(data.get_temp_mut_or_default::<Self>(egui::Id::null())))
+        ctx.data_mut(|data| f(data.get_temp_mut_or_default::<Self>(egui::Id::NULL)))
     }
 
     pub fn set_port_position(&mut self, port_id: &PortId<BlockId>, position: egui::Pos2) {

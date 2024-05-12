@@ -12,11 +12,17 @@ tapir-undo = { path = "../tapir-undo" }
 
 anyhow = "1.0"
 arc-swap = "1.6.0"
-catppuccin-egui = "3.0"
 cpal = "0.15"
-eframe = "0.22"
-egui-notify = "0.7"
-egui_file = "0.10"
+
+egui = "0.27"
+egui_plot = "0.27"
+eframe = "0.27"
+egui-notify = "0.14"
+egui_file = "0.17"
+catppuccin-egui = { version = "5.1", default-features = false, features = [
+    "egui27",
+] }
+
 env_logger = "0.10"
 hound = "3.5"
 midir = "0.9"

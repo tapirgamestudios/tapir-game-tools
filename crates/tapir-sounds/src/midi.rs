@@ -83,39 +83,39 @@ impl Midi {
 
             let mut current_note = 0u8;
 
-            self.midi_connection = Some(
-                match midi_input.connect(
-                    &in_port.0,
-                    "tapir-sounds-in",
-                    move |_, message, _| {
-                        let event = midly::live::LiveEvent::parse(message).unwrap();
+            let connect_result = midi_input.connect(
+                &in_port.0,
+                "tapir-sounds-in",
+                move |_, message, _| {
+                    let event = midly::live::LiveEvent::parse(message).unwrap();
 
-                        if let midly::live::LiveEvent::Midi { message, .. } = event {
-                            match message {
-                                midly::MidiMessage::NoteOn { key, .. } => {
-                                    audio.play_at_speed(midi_to_speed(key.into()));
-                                    current_note = key.into();
-                                }
-                                midly::MidiMessage::NoteOff { key, .. } => {
-                                    let key: u8 = key.into();
-                                    if current_note == key {
-                                        audio.stop_playing();
-                                    }
-                                }
-                                _ => {}
+                    if let midly::live::LiveEvent::Midi { message, .. } = event {
+                        match message {
+                            midly::MidiMessage::NoteOn { key, .. } => {
+                                audio.play_at_speed(midi_to_speed(key.into()));
+                                current_note = key.into();
                             }
+                            midly::MidiMessage::NoteOff { key, .. } => {
+                                let key: u8 = key.into();
+                                if current_note == key {
+                                    audio.stop_playing();
+                                }
+                            }
+                            _ => {}
                         }
-                    },
-                    (),
-                ) {
-                    Ok(connection) => connection,
-                    Err(e) => {
-                        return Err(MidiError::Warning(format!(
-                            "Failed to create midi connection: {e}"
-                        )));
                     }
                 },
+                (),
             );
+
+            self.midi_connection = Some(match connect_result {
+                Ok(connection) => connection,
+                Err(e) => {
+                    return Err(MidiError::Warning(format!(
+                        "Failed to create midi connection: {e}"
+                    )));
+                }
+            });
 
             self.selected_midi_device = Some(in_port.clone());
         } else {

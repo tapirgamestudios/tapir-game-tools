@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use eframe::egui;
+use egui::Vec2b;
 
 use crate::widget;
 
@@ -62,11 +63,11 @@ pub fn block(
 
 fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<Arc<[f64]>>) {
     ui.horizontal(|ui| {
-        egui::widgets::plot::Plot::new(egui::Id::new(block_id).with("plot"))
+        egui_plot::Plot::new(egui::Id::new(block_id).with("plot"))
             .center_y_axis(true)
             .include_y(1.2)
             .include_y(-1.2)
-            .auto_bounds_x()
+            .auto_bounds(Vec2b::new(true, false))
             .clamp_grid(true)
             .width(200.0)
             .height(50.0)
@@ -75,16 +76,16 @@ fn output(ui: &mut egui::Ui, block_id: tapir_sounds_state::Id, display: Option<A
                     let display = display.clone();
                     let len = display.len();
 
-                    let line = egui::widgets::plot::PlotPoints::from_explicit_callback(
+                    let line = egui_plot::PlotPoints::from_explicit_callback(
                         move |x| display[x as usize],
                         0.0..=(len as f64 - 1.0),
                         600,
                     );
-                    plot_ui.line(egui::widgets::plot::Line::new(line));
+                    plot_ui.line(egui_plot::Line::new(line));
                 }
             });
 
-        tapir_cables::port(ui, block_id, 0, tapir_cables::PortDirection::Output)
+        tapir_cables::port(ui, block_id, 0, tapir_cables::PortDirection::Output);
     });
 }
 
@@ -143,12 +144,12 @@ fn draggable_block<T>(
         ui.ctx().style().visuals.widgets.noninteractive.bg_stroke
     };
 
-    let body_shape = egui::epaint::Shape::Rect(egui::epaint::RectShape {
-        rect: outer_rect,
-        rounding: egui::epaint::Rounding::same(3.0),
-        fill: bg_colour,
-        stroke: bg_stroke,
-    });
+    let body_shape = egui::epaint::Shape::Rect(egui::epaint::RectShape::new(
+        outer_rect,
+        egui::epaint::Rounding::same(3.0),
+        bg_colour,
+        bg_stroke,
+    ));
 
     ui.painter().set(background_shape, body_shape);
 

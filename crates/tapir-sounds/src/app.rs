@@ -4,8 +4,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
-use eframe::egui;
-
 use crate::audio;
 use crate::midi;
 use crate::save_load;
@@ -158,10 +156,10 @@ impl TapirSoundApp {
 }
 
 impl eframe::App for TapirSoundApp {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
-                self.file_menu(ui, ctx, frame);
+                self.file_menu(ui, ctx);
                 self.edit_menu(ui, ctx);
             });
         });
@@ -334,11 +332,13 @@ impl eframe::App for TapirSoundApp {
             self.update_audio();
         }
 
-        if let Some(title_display) = self.open_save.title_display() {
-            frame.set_window_title(&("Tapir Sounds - ".to_owned() + &title_display));
+        let title = if let Some(title_display) = self.open_save.title_display() {
+            "Tapir Sounds - ".to_owned() + &title_display
         } else {
-            frame.set_window_title("Tapir Sounds");
-        }
+            "Tapir Sounds".to_owned()
+        };
+
+        ctx.send_viewport_cmd(egui::ViewportCommand::Title(title));
 
         match self.open_save.show(ctx) {
             open_save::OpenSaveResponse::Nothing => {}
@@ -368,7 +368,7 @@ impl eframe::App for TapirSoundApp {
 }
 
 impl TapirSoundApp {
-    fn file_menu(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn file_menu(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         if ctx.input(|i| i.modifiers.command && i.key_pressed(egui::Key::S)) {
             if let Some(path) = self.open_save.file_name() {
                 self.save(&path);
@@ -421,7 +421,7 @@ impl TapirSoundApp {
             ui.separator();
 
             if ui.button("Quit").clicked() {
-                frame.close();
+                ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                 ui.close_menu();
             }
         });
