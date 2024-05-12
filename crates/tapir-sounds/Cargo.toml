@@ -11,7 +11,7 @@ tapir-sounds-state = { path = "../tapir-sounds-state" }
 tapir-undo = { path = "../tapir-undo" }
 
 anyhow = "1.0"
-arc-swap = "1.6.0"
+arc-swap = "1.7.1"
 cpal = "0.15"
 
 egui = "0.27"
