@@ -1,14 +1,15 @@
+use catppuccin_egui::Theme;
 use egui::{
     emath::RectTransform, epaint::RectShape, Color32, Pos2, Rect, Rounding, Sense, Stroke, Vec2,
 };
 
-const NUM_PIANO_KEYS: usize = 88;
-const NUM_WHITE_KEYS: usize = 52;
+pub const NUM_PIANO_KEYS: usize = 88;
+pub const NUM_WHITE_KEYS: usize = 52;
 
 const PIANO_KEY_WIDTH: f32 = 64f32;
-const PIANO_KEY_HEIGHT: f32 = 16f32;
+pub const PIANO_KEY_HEIGHT: f32 = 16f32;
 
-pub fn piano(ui: &mut egui::Ui) {
+pub fn piano(ui: &mut egui::Ui, theme: &Theme) {
     let (response, painter) = ui.allocate_painter(
         Vec2::new(PIANO_KEY_WIDTH, NUM_WHITE_KEYS as f32 * PIANO_KEY_HEIGHT),
         Sense::hover(),
@@ -19,11 +20,12 @@ pub fn piano(ui: &mut egui::Ui) {
         response.rect,
     );
 
+    const BLACK_KEY_HEIGHT: f32 = PIANO_KEY_HEIGHT * 0.6;
     let white_key_rect =
         Rect::from_min_size(Pos2::ZERO, Vec2::new(PIANO_KEY_WIDTH, PIANO_KEY_HEIGHT));
     let black_key_rect = Rect::from_min_size(
-        Pos2::new(0., PIANO_KEY_HEIGHT - PIANO_KEY_HEIGHT * 0.75 / 2.),
-        Vec2::new(PIANO_KEY_WIDTH / 1.5, PIANO_KEY_HEIGHT * 0.75),
+        Pos2::new(0., PIANO_KEY_HEIGHT - BLACK_KEY_HEIGHT / 2.),
+        Vec2::new(PIANO_KEY_WIDTH / 1.5, BLACK_KEY_HEIGHT),
     );
 
     for key in 0..NUM_WHITE_KEYS {
@@ -33,7 +35,7 @@ pub fn piano(ui: &mut egui::Ui) {
             this_key_rect,
             Rounding::ZERO,
             Color32::WHITE,
-            Stroke::new(1., Color32::BLACK),
+            Stroke::new(1., theme.text),
         ));
     }
 
@@ -50,7 +52,7 @@ pub fn piano(ui: &mut egui::Ui) {
                 this_black_key_rect,
                 Rounding::ZERO,
                 Color32::BLACK,
-                Stroke::new(1., Color32::WHITE),
+                Stroke::new(1., theme.base),
             ));
         }
     }

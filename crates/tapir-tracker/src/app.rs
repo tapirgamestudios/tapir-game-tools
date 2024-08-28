@@ -1,21 +1,21 @@
-use crate::widgets::piano;
+use crate::widgets::*;
 
-pub struct TapirTrackerApp {}
+pub struct TapirTrackerApp {
+    theme: catppuccin_egui::Theme,
+}
 
 impl TapirTrackerApp {
     pub fn new(cc: &eframe::CreationContext<'_>, _filename: Option<String>) -> Self {
-        catppuccin_egui::set_theme(&cc.egui_ctx, catppuccin_egui::FRAPPE);
+        let theme = catppuccin_egui::FRAPPE;
+        catppuccin_egui::set_theme(&cc.egui_ctx, theme);
 
-        Self {}
+        Self { theme }
     }
 }
 
 impl eframe::App for TapirTrackerApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        use egui::{
-            menu, scroll_area::ScrollBarVisibility, Align, CentralPanel, Layout, ScrollArea,
-            SidePanel, TopBottomPanel,
-        };
+        use egui::{menu, Align, CentralPanel, Layout, ScrollArea, SidePanel, TopBottomPanel};
 
         TopBottomPanel::top("menu").show(ctx, |ui| {
             menu::bar(ui, |ui| {
@@ -65,11 +65,15 @@ impl eframe::App for TapirTrackerApp {
         });
 
         CentralPanel::default().show(ctx, |ui| {
-            ScrollArea::both()
-                .scroll_bar_visibility(ScrollBarVisibility::AlwaysVisible)
-                .show(ui, |ui| {
-                    piano(ui);
+            ScrollArea::vertical().show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    piano(ui, &self.theme);
+
+                    ScrollArea::horizontal().show(ui, |ui| {
+                        timeline(ui, &self.theme);
+                    });
                 });
+            });
         });
     }
 }
