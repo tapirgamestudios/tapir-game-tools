@@ -70,7 +70,7 @@ impl eframe::App for TapirTrackerApp {
                     piano(ui, &self.theme);
 
                     ScrollArea::horizontal().show(ui, |ui| {
-                        timeline(ui, &self.theme);
+                        timeline(ui, &self.theme, TimelineSettings { beats_per_bar: 4 });
                     });
                 });
             });
