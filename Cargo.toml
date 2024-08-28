@@ -7,4 +7,6 @@ members = [
     "crates/tapir-sounds-state",
     "crates/tapir-cables",
     "crates/tapir-undo",
+
+    "crates/tapir-tracker",
 ]
