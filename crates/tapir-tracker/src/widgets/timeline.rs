@@ -1,7 +1,8 @@
 use catppuccin_egui::Theme;
 
 use egui::{
-    emath::RectTransform, epaint::RectShape, Pos2, Rect, Rounding, Sense, Stroke, Ui, Vec2,
+    emath::RectTransform, epaint::RectShape, Align2, FontId, Pos2, Rect, Rounding, Sense, Stroke,
+    Ui, Vec2,
 };
 
 use super::piano;
@@ -36,11 +37,13 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) {
     );
 
     // render the vertical bars
-    for i in 0..num_timeline_items {
-        let this_rect = to_screen
-            .transform_rect(timeline_rect.translate(Vec2::new(i as f32 * TIMELINE_ITEM_WIDTH, 0.)));
+    for beat in 0..num_timeline_items {
+        let this_rect = to_screen.transform_rect(
+            timeline_rect.translate(Vec2::new(beat as f32 * TIMELINE_ITEM_WIDTH, 0.)),
+        );
 
-        let fill_colour = if i % settings.beats_per_bar == 0 {
+        let is_first_for_bar = beat % settings.beats_per_bar == 0;
+        let fill_colour = if is_first_for_bar {
             theme.surface0
         } else {
             theme.surface1
@@ -52,5 +55,23 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) {
             fill_colour,
             Stroke::new(1., theme.base),
         ));
+
+        if is_first_for_bar {
+            let text_y_gap = piano::PIANO_KEY_HEIGHT * 7.;
+            let x_pos = this_rect.min.x + this_rect.width() / 2.;
+
+            for repeat in 0..=(timeline_rect.height() / text_y_gap) as i32 {
+                painter.text(
+                    Pos2::new(
+                        x_pos,
+                        text_y_gap * repeat as f32 + this_rect.min.y + 2. * piano::PIANO_KEY_HEIGHT,
+                    ),
+                    Align2::CENTER_TOP,
+                    beat,
+                    FontId::monospace(12.),
+                    theme.text,
+                );
+            }
+        }
     }
 }

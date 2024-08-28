@@ -65,13 +65,15 @@ impl eframe::App for TapirTrackerApp {
         });
 
         CentralPanel::default().show(ctx, |ui| {
-            ScrollArea::vertical().show(ui, |ui| {
+            ScrollArea::vertical().drag_to_scroll(false).show(ui, |ui| {
                 ui.horizontal(|ui| {
                     piano(ui, &self.theme);
 
-                    ScrollArea::horizontal().show(ui, |ui| {
-                        timeline(ui, &self.theme, TimelineSettings { beats_per_bar: 4 });
-                    });
+                    ScrollArea::horizontal()
+                        .drag_to_scroll(false)
+                        .show(ui, |ui| {
+                            timeline(ui, &self.theme, TimelineSettings { beats_per_bar: 4 });
+                        });
                 });
             });
         });
