@@ -121,7 +121,7 @@ fn draggable_block<T>(
     );
 
     let inner_rect = outer_rect_bounds.shrink2(margin);
-    let mut child_ui = ui.child_ui(inner_rect, *ui.layout());
+    let mut child_ui = ui.child_ui(inner_rect, *ui.layout(), None);
 
     let response = content(&mut child_ui);
 

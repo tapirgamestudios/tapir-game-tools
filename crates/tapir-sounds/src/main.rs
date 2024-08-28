@@ -21,6 +21,6 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "Tapir Sounds",
         options,
-        Box::new(move |cc| Box::new(TapirSoundApp::new(cc, args.get(1).cloned()))),
+        Box::new(move |cc| Ok(Box::new(TapirSoundApp::new(cc, args.get(1).cloned())))),
     )
 }

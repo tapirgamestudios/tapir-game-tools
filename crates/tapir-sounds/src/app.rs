@@ -229,6 +229,7 @@ impl eframe::App for TapirSoundApp {
                         ),
                         egui::Layout::default(),
                         block.id(),
+                        None,
                     );
 
                     child_ui.set_clip_rect(ui.max_rect());
@@ -281,7 +282,7 @@ impl eframe::App for TapirSoundApp {
                 }
             }
 
-            let mut cable_ui = ui.child_ui(ui.max_rect(), *ui.layout());
+            let mut cable_ui = ui.child_ui(ui.max_rect(), *ui.layout(), None);
             cable_ui.set_clip_rect(ui.min_rect());
             let cable_response = tapir_cables::cables(
                 &cable_ui,
