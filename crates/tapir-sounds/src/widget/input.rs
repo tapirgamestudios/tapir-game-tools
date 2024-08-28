@@ -50,7 +50,7 @@ pub fn input(
                 if ui
                     .add(
                         egui::DragValue::new(&mut frequency)
-                            .clamp_range(0..=10000)
+                            .range(0..=10000)
                             .suffix("Hz"),
                     )
                     .changed()
@@ -69,7 +69,7 @@ pub fn input(
                 if ui
                     .add(
                         egui::DragValue::new(&mut amplitude)
-                            .clamp_range(-1..=1)
+                            .range(-1..=1)
                             .speed(0.005),
                     )
                     .changed()
@@ -90,7 +90,7 @@ pub fn input(
                 if ui
                     .add(
                         egui::DragValue::new(&mut periods)
-                            .clamp_range(0..=1000)
+                            .range(0..=1000)
                             .speed(0.025)
                             .max_decimals(1),
                     )
