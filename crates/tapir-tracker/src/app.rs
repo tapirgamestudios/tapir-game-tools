@@ -1,3 +1,5 @@
+use crate::widgets::piano;
+
 pub struct TapirTrackerApp {}
 
 impl TapirTrackerApp {
@@ -10,7 +12,10 @@ impl TapirTrackerApp {
 
 impl eframe::App for TapirTrackerApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        use egui::{menu, Align, CentralPanel, Layout, SidePanel, TopBottomPanel};
+        use egui::{
+            menu, scroll_area::ScrollBarVisibility, Align, CentralPanel, Layout, ScrollArea,
+            SidePanel, TopBottomPanel,
+        };
 
         TopBottomPanel::top("menu").show(ctx, |ui| {
             menu::bar(ui, |ui| {
@@ -60,7 +65,11 @@ impl eframe::App for TapirTrackerApp {
         });
 
         CentralPanel::default().show(ctx, |ui| {
-            ui.label("Piano roll goes here");
+            ScrollArea::both()
+                .scroll_bar_visibility(ScrollBarVisibility::AlwaysVisible)
+                .show(ui, |ui| {
+                    piano(ui);
+                });
         });
     }
 }
