@@ -1216,6 +1216,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "egui_hooks"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a37002a8c50d6357286ab5ec2a36715517b42e4eea5b0b3cc7361c658b2aed6"
+dependencies = [
+ "arc-swap",
+ "egui",
+ "parking_lot",
+]
+
+[[package]]
 name = "egui_plot"
 version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3103,6 +3114,7 @@ dependencies = [
  "catppuccin-egui",
  "eframe",
  "egui",
+ "egui_hooks",
  "env_logger 0.11.5",
 ]
 

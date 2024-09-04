@@ -1,3 +1,5 @@
+use egui_hooks::UseHookExt;
+
 use crate::widgets::*;
 
 pub struct TapirTrackerApp {
@@ -70,13 +72,25 @@ impl eframe::App for TapirTrackerApp {
                 .auto_shrink([false, false])
                 .show(ui, |ui| {
                     ui.horizontal(|ui| {
-                        piano(ui, &self.theme);
+                        let highlighted_position = ui.use_state(|| None, ());
+
+                        piano(
+                            ui,
+                            &self.theme,
+                            highlighted_position.map(|position: (usize, Note)| position.1),
+                        );
 
                         ScrollArea::horizontal()
                             .drag_to_scroll(false)
                             .auto_shrink([false, false])
                             .show(ui, |ui| {
-                                timeline(ui, &self.theme, TimelineSettings { beats_per_bar: 4 });
+                                let response = timeline(
+                                    ui,
+                                    &self.theme,
+                                    TimelineSettings { beats_per_bar: 4 },
+                                );
+
+                                highlighted_position.set_next(response.hovered_beat_note);
                             });
                     });
                 });

@@ -11,3 +11,4 @@ catppuccin-egui = { version = "5.2", default-features = false, features = [
     "egui28",
 ] }
 env_logger = "0.11.5"
+egui_hooks = "0.5.0"
