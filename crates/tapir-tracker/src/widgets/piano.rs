@@ -1,3 +1,5 @@
+use std::fmt::{self, Display};
+
 use catppuccin_egui::Theme;
 use egui::{
     emath::RectTransform, epaint::RectShape, Align2, Color32, FontId, Pos2, Rect, Rounding, Sense,
@@ -28,7 +30,7 @@ impl Note {
         let octave = white_note_index / 7; // number of white notes in an octave
         let offset = white_note_index % 7;
 
-        static WHITE_NOTE_OFFSETS: &[usize] = &[0, 2, 3, 5, 7, 8, 10];
+        static WHITE_NOTE_OFFSETS: [usize; 7] = [0, 2, 3, 5, 7, 8, 10];
 
         Self(octave * 12 + WHITE_NOTE_OFFSETS[offset])
     }
@@ -37,10 +39,31 @@ impl Note {
         let octave = white_note_index / 7; // number of white notes in an octave
         let offset = white_note_index % 7;
 
-        static BLACK_NOTE_OFFSETS: &[Option<usize>] =
-            &[Some(1), None, Some(4), Some(6), None, Some(9), Some(11)];
+        static BLACK_NOTE_OFFSETS: [Option<usize>; 7] =
+            [Some(1), None, Some(4), Some(6), None, Some(9), Some(11)];
 
         BLACK_NOTE_OFFSETS[offset].map(|offset| Self(octave * 12 + offset))
+    }
+
+    pub fn octave(self) -> usize {
+        self.0 / 12
+    }
+
+    pub fn note(self) -> usize {
+        self.0 % 12
+    }
+}
+
+impl Display for Note {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        static NOTES: [&str; 12] = [
+            "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#",
+        ];
+
+        let octave = self.octave();
+        let note = self.note();
+
+        write!(f, "{}{octave}", NOTES[note])
     }
 }
 
@@ -68,12 +91,10 @@ pub fn piano(ui: &mut egui::Ui, theme: &Theme, highlighted_note: Option<Note>) {
             .transform_rect(white_key_rect.translate(Vec2::new(0., key as f32 * PIANO_KEY_HEIGHT)));
 
         let key = NUM_WHITE_KEYS - key - 1;
-        let note = key % 7;
-        let value = key / 7;
 
-        let this_note = Note::from_white_note(key);
+        let note = Note::from_white_note(key);
 
-        let colour = if highlighted_note == Some(this_note) {
+        let colour = if highlighted_note == Some(note) {
             Color32::LIGHT_RED
         } else {
             Color32::WHITE
@@ -86,12 +107,10 @@ pub fn piano(ui: &mut egui::Ui, theme: &Theme, highlighted_note: Option<Note>) {
             Stroke::new(1., theme.text),
         ));
 
-        static ALPHABET: &[char] = &['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-
         painter.text(
             this_key_rect.right_center(),
             Align2::RIGHT_CENTER,
-            format!("{}{value}", ALPHABET[note]),
+            format!("{note}"),
             FontId::monospace(12.),
             theme.surface0,
         );
