@@ -1,6 +1,7 @@
 use catppuccin_egui::Theme;
 use egui::{
-    emath::RectTransform, epaint::RectShape, Color32, Pos2, Rect, Rounding, Sense, Stroke, Vec2,
+    emath::RectTransform, epaint::RectShape, Align2, Color32, FontId, Pos2, Rect, Rounding, Sense,
+    Stroke, Vec2,
 };
 
 // pub const NUM_PIANO_KEYS: usize = 88;
@@ -37,13 +38,28 @@ pub fn piano(ui: &mut egui::Ui, theme: &Theme) {
             Color32::WHITE,
             Stroke::new(1., theme.text),
         ));
+
+        let key = NUM_WHITE_KEYS - key - 1;
+        let note = key % 7;
+        let value = key / 7;
+
+        static ALPHABET: &[char] = &['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+        painter.text(
+            this_key_rect.right_center(),
+            Align2::RIGHT_CENTER,
+            format!("{}{value}", ALPHABET[note]),
+            FontId::monospace(12.),
+            theme.surface0,
+        );
     }
 
-    // Draw the black notes after the white ones to ensure they're on top
-    for key in 0..NUM_WHITE_KEYS {
+    // Draw the black notes after the white ones to ensure they're on top.
+    // minus one on the keys since we don't want to draw A-0b
+    for key in 0..(NUM_WHITE_KEYS - 1) {
         let note = key % 7;
         // draw the sharp black note
-        if note != 2 && note != 6 {
+        if note != 0 && note != 4 {
             let this_black_key_rect = to_screen.transform_rect(
                 black_key_rect.translate(Vec2::new(0., key as f32 * PIANO_KEY_HEIGHT)),
             );
