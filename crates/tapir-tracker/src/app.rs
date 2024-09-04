@@ -87,7 +87,13 @@ impl eframe::App for TapirTrackerApp {
                                 let response = timeline(
                                     ui,
                                     &self.theme,
-                                    TimelineSettings { beats_per_bar: 4 },
+                                    TimelineSettings {
+                                        beats_per_bar: 4,
+                                        keys_in_scale: [
+                                            true, false, true, false, true, true, false, true,
+                                            false, true, false, true,
+                                        ],
+                                    },
                                 );
 
                                 highlighted_position.set_next(response.hovered_beat_note);

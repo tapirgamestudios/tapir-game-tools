@@ -10,15 +10,18 @@ pub const NUM_PIANO_KEYS: usize = 88;
 pub const NUM_WHITE_KEYS: usize = 52;
 
 const PIANO_KEY_WIDTH: f32 = 64f32;
-pub const PIANO_KEY_HEIGHT: f32 = 16f32;
+pub const PIANO_KEY_HEIGHT: f32 = 32f32;
+
+// can't be a const since you can't do const operations on floats
+pub fn single_key_height() -> f32 {
+    let total_piano_height = NUM_WHITE_KEYS as f32 * PIANO_KEY_HEIGHT;
+    total_piano_height / NUM_PIANO_KEYS as f32
+}
 
 pub fn note_from_y(y: f32) -> Note {
     let y = NUM_WHITE_KEYS as f32 * PIANO_KEY_HEIGHT - y;
 
-    let total_piano_height = NUM_WHITE_KEYS as f32 * PIANO_KEY_HEIGHT;
-    let single_key_height = total_piano_height / NUM_PIANO_KEYS as f32;
-
-    Note::from_raw((y / single_key_height) as usize)
+    Note::from_raw((y / single_key_height()) as usize)
 }
 
 pub fn piano(ui: &mut egui::Ui, theme: &Theme, highlighted_note: Option<Note>) {
