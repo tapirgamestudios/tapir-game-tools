@@ -5,7 +5,8 @@ use egui::{
     Ui, Vec2,
 };
 
-use super::{piano, Note};
+use super::piano;
+use crate::note::Note;
 
 const TIMELINE_ITEM_WIDTH: f32 = piano::PIANO_KEY_HEIGHT;
 
@@ -16,7 +17,7 @@ pub struct TimelineSettings {
 }
 
 pub struct TimelineResponse {
-    pub hovered_beat_note: Option<(usize, piano::Note)>,
+    pub hovered_beat_note: Option<(usize, Note)>,
 }
 
 pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) -> TimelineResponse {
@@ -43,7 +44,7 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) -> Timel
     let hovered_beat_note = response.hover_pos().map(|hovered_pos| {
         let hovered_local_pos = to_screen.inverse().transform_pos(hovered_pos);
 
-        let hovered_note = Note::from_y(hovered_local_pos.y);
+        let hovered_note = piano::note_from_y(hovered_local_pos.y);
 
         let hovered_beat = (hovered_local_pos.x / TIMELINE_ITEM_WIDTH).floor() as usize;
 

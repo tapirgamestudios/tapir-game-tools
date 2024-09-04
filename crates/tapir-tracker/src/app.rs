@@ -1,6 +1,6 @@
 use egui_hooks::UseHookExt;
 
-use crate::widgets::*;
+use crate::{note::Note, widgets::*};
 
 pub struct TapirTrackerApp {
     theme: catppuccin_egui::Theme,

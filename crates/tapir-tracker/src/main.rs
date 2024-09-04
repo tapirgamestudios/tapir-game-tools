@@ -7,6 +7,7 @@ use app::TapirTrackerApp;
 use egui::ViewportBuilder;
 
 mod app;
+mod note;
 mod widgets;
 
 fn main() -> Result<(), eframe::Error> {
