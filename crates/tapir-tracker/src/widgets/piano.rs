@@ -3,7 +3,7 @@ use egui::{
     emath::RectTransform, epaint::RectShape, Color32, Pos2, Rect, Rounding, Sense, Stroke, Vec2,
 };
 
-pub const NUM_PIANO_KEYS: usize = 88;
+// pub const NUM_PIANO_KEYS: usize = 88;
 pub const NUM_WHITE_KEYS: usize = 52;
 
 const PIANO_KEY_WIDTH: f32 = 64f32;
