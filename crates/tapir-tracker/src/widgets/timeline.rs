@@ -2,7 +2,7 @@ use catppuccin_egui::Theme;
 
 use egui::{
     emath::RectTransform, epaint::RectShape, vec2, Align2, Color32, FontId, Pos2, Rect, Rounding,
-    Sense, Stroke, Ui, Vec2,
+    Sense, Stroke, Ui,
 };
 
 use super::piano;
@@ -10,7 +10,7 @@ use crate::note::Note;
 
 const TIMELINE_ITEM_WIDTH: f32 = piano::PIANO_KEY_HEIGHT;
 
-const TIMELINE_TOTAL_HEIGHT: f32 = piano::PIANO_KEY_HEIGHT * piano::NUM_WHITE_KEYS as f32;
+const TIMELINE_TOTAL_HEIGHT: f32 = piano::PIANO_KEY_HEIGHT * piano::NUM_PIANO_KEYS as f32;
 
 pub struct TimelineSettings {
     pub beats_per_bar: usize,
@@ -25,7 +25,7 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) -> Timel
     let num_timeline_items = 0x40;
 
     let (response, painter) = ui.allocate_painter(
-        Vec2::new(
+        vec2(
             TIMELINE_ITEM_WIDTH * num_timeline_items as f32,
             TIMELINE_TOTAL_HEIGHT,
         ),
@@ -37,16 +37,14 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) -> Timel
         response.rect,
     );
 
-    let timeline_rect = Rect::from_min_size(
-        Pos2::ZERO,
-        Vec2::new(TIMELINE_ITEM_WIDTH, TIMELINE_TOTAL_HEIGHT),
-    );
+    let timeline_rect =
+        Rect::from_min_size(Pos2::ZERO, vec2(TIMELINE_ITEM_WIDTH, TIMELINE_TOTAL_HEIGHT));
 
     let note_rect = Rect::from_min_size(
         Pos2::ZERO,
-        Vec2::new(
+        vec2(
             TIMELINE_ITEM_WIDTH * num_timeline_items as f32,
-            piano::single_key_height(),
+            piano::PIANO_KEY_HEIGHT,
         ),
     );
 
@@ -62,9 +60,8 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) -> Timel
 
     // render the horizontal bars
     for note in 0..piano::NUM_PIANO_KEYS {
-        let this_rect = to_screen.transform_rect(
-            note_rect.translate(vec2(0., note as f32 * piano::single_key_height())),
-        );
+        let this_rect = to_screen
+            .transform_rect(note_rect.translate(vec2(0., note as f32 * piano::PIANO_KEY_HEIGHT)));
 
         let note = Note::from_raw(piano::NUM_PIANO_KEYS - note - 1);
         let colour = if hovered_beat_note.map(|(_, note)| note) == Some(note) {

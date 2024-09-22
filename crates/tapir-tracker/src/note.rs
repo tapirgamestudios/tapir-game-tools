@@ -35,6 +35,10 @@ impl Note {
     pub fn from_raw(raw_note: usize) -> Note {
         Self(raw_note)
     }
+
+    pub fn is_black_key(self) -> bool {
+        matches!(self.note(), 1 | 4 | 6 | 9 | 11)
+    }
 }
 
 impl fmt::Display for Note {
