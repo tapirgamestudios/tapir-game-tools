@@ -5,23 +5,8 @@ use std::fmt;
 pub struct Note(usize);
 
 impl Note {
-    pub fn from_white_note(white_note_index: usize) -> Self {
-        let octave = white_note_index / 7; // number of white notes in an octave
-        let offset = white_note_index % 7;
-
-        static WHITE_NOTE_OFFSETS: [usize; 7] = [0, 2, 3, 5, 7, 8, 10];
-
-        Self(octave * 12 + WHITE_NOTE_OFFSETS[offset])
-    }
-
-    pub fn from_sharpened_white_note(white_note_index: usize) -> Option<Self> {
-        let octave = white_note_index / 7; // number of white notes in an octave
-        let offset = white_note_index % 7;
-
-        static BLACK_NOTE_OFFSETS: [Option<usize>; 7] =
-            [Some(1), None, Some(4), Some(6), None, Some(9), Some(11)];
-
-        BLACK_NOTE_OFFSETS[offset].map(|offset| Self(octave * 12 + offset))
+    pub fn from_note_number(note_number: usize) -> Note {
+        Self(note_number)
     }
 
     pub fn octave(self) -> usize {
@@ -30,10 +15,6 @@ impl Note {
 
     pub fn note(self) -> usize {
         self.0 % 12
-    }
-
-    pub fn from_raw(raw_note: usize) -> Note {
-        Self(raw_note)
     }
 
     pub fn is_black_key(self) -> bool {

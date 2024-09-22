@@ -13,7 +13,7 @@ pub const PIANO_KEY_HEIGHT: f32 = 18f32;
 
 pub fn note_from_y(y: f32) -> Note {
     let y = NUM_PIANO_KEYS as f32 * PIANO_KEY_HEIGHT - y;
-    Note::from_raw((y / PIANO_KEY_HEIGHT) as usize)
+    Note::from_note_number((y / PIANO_KEY_HEIGHT) as usize)
 }
 
 pub fn piano(ui: &mut egui::Ui, theme: &Theme, highlighted_note: Option<Note>) {
@@ -32,7 +32,7 @@ pub fn piano(ui: &mut egui::Ui, theme: &Theme, highlighted_note: Option<Note>) {
         Rect::from_min_size(Pos2::ZERO, vec2(PIANO_KEY_WIDTH * 0.7, PIANO_KEY_HEIGHT));
 
     for key in 0..NUM_PIANO_KEYS {
-        let note: Note = Note::from_raw(NUM_PIANO_KEYS - key - 1);
+        let note: Note = Note::from_note_number(NUM_PIANO_KEYS - key - 1);
 
         let this_key_rect = to_screen.transform_rect(
             if note.is_black_key() {

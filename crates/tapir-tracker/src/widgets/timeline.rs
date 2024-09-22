@@ -63,7 +63,7 @@ pub fn timeline(ui: &mut Ui, theme: &Theme, settings: TimelineSettings) -> Timel
         let this_rect = to_screen
             .transform_rect(note_rect.translate(vec2(0., note as f32 * piano::PIANO_KEY_HEIGHT)));
 
-        let note = Note::from_raw(piano::NUM_PIANO_KEYS - note - 1);
+        let note = Note::from_note_number(piano::NUM_PIANO_KEYS - note - 1);
         let colour = if hovered_beat_note.map(|(_, note)| note) == Some(note) {
             theme.surface2
         } else if settings.keys_in_scale[note.note()] {
