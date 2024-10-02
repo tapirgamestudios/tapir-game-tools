@@ -8,6 +8,7 @@ use egui::ViewportBuilder;
 
 mod app;
 mod note;
+mod state;
 mod widgets;
 
 fn main() -> Result<(), eframe::Error> {

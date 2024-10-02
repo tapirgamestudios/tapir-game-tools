@@ -34,3 +34,9 @@ impl fmt::Display for Note {
         write!(f, "{}{octave}", NOTES[note])
     }
 }
+
+impl fmt::Debug for Note {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Note({self})")
+    }
+}
