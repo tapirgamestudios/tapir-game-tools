@@ -966,6 +966,7 @@ version = "0.1.0"
 dependencies = [
  "agb_fixnum",
  "ariadne",
+ "bytecode",
  "insta",
  "lalrpop",
  "lalrpop-util",
