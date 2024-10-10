@@ -3544,6 +3544,13 @@ dependencies = [
 name = "tapir-script-macros"
 version = "0.1.0"
 dependencies = [
+ "tapir-script-macros-core",
+]
+
+[[package]]
+name = "tapir-script-macros-core"
+version = "0.1.0"
+dependencies = [
  "compiler",
 ]
 
