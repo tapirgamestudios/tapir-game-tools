@@ -3861,6 +3861,7 @@ dependencies = [
  "bytecode",
  "compiler",
  "insta",
+ "paste",
  "serde",
 ]
 
