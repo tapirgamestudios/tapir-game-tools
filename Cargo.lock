@@ -97,9 +97,9 @@ checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
 name = "agb_fixnum"
-version = "0.21.0"
+version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95cf027c1f07e9c3bd43567eaa348f85375ed119d68fa4bb34a8ff8d0ef49773"
+checksum = "85f34b72407c42d911bf88d4934ceadd97741ac851e1edd6105265a8db00e03f"
 dependencies = [
  "agb_macros",
  "num-traits",
@@ -107,9 +107,9 @@ dependencies = [
 
 [[package]]
 name = "agb_macros"
-version = "0.21.0"
+version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db883a3537fedc74cbcf8a96b604dafe69aab5df0799c519fe235853b4fd3695"
+checksum = "c99c2a624219134f8265f6da0b0d526fe16dae57710f189e67cb7721cf6a3815"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3862,6 +3862,7 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 name = "vm"
 version = "0.1.0"
 dependencies = [
+ "agb_fixnum",
  "bytecode",
  "compiler",
  "insta",
