@@ -97,12 +97,33 @@ checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
 name = "agb_fixnum"
+version = "0.20.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f64ba4f74d2b2548522ee76e459c8185301b23648c1313eccee5b4eeb4a4225"
+dependencies = [
+ "agb_macros 0.20.5",
+ "num-traits",
+]
+
+[[package]]
+name = "agb_fixnum"
 version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "85f34b72407c42d911bf88d4934ceadd97741ac851e1edd6105265a8db00e03f"
 dependencies = [
- "agb_macros",
+ "agb_macros 0.21.1",
  "num-traits",
+]
+
+[[package]]
+name = "agb_macros"
+version = "0.20.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d90d9aae205e75d94671c551a5b4359c2cf243913f2a35e68dc6d209ab9b55d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.79",
 ]
 
 [[package]]
@@ -963,7 +984,7 @@ dependencies = [
 name = "compiler"
 version = "0.1.0"
 dependencies = [
- "agb_fixnum",
+ "agb_fixnum 0.21.1",
  "ariadne",
  "bytecode",
  "insta",
@@ -3515,6 +3536,7 @@ dependencies = [
 name = "tapir-script"
 version = "0.1.0"
 dependencies = [
+ "agb_fixnum 0.20.5",
  "tapir-script-macros",
  "vm",
 ]
@@ -3862,7 +3884,7 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 name = "vm"
 version = "0.1.0"
 dependencies = [
- "agb_fixnum",
+ "agb_fixnum 0.21.1",
  "bytecode",
  "compiler",
  "insta",
