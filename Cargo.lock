@@ -971,6 +971,7 @@ dependencies = [
  "lalrpop-util",
  "logos",
  "num-traits",
+ "petgraph",
  "serde",
 ]
 
