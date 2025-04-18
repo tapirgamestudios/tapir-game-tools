@@ -8,5 +8,12 @@ members = [
     "crates/tapir-cables",
     "crates/tapir-undo",
 
-    "crates/tapir-tracker", "crates/tapir-script/compiler", "crates/tapir-script/vm", "crates/tapir-script/bytecode", "crates/tapir-script/tapir-script-macros", "crates/tapir-script/tapir-script", "crates/tapir-script/tapir-script-macros-core",
+    "crates/tapir-tracker",
+    "crates/tapir-script/compiler",
+    "crates/tapir-script/vm",
+    "crates/tapir-script/bytecode",
+    "crates/tapir-script/tapir-script-macros",
+    "crates/tapir-script/tapir-script",
+    "crates/tapir-script/tapir-script-macros-core",
+    "crates/tapir-tween",
 ]
