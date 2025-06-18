@@ -1,10 +1,19 @@
-// Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![warn(clippy::all)]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-slint::include_modules!();
+fn main() -> eframe::Result {
+    env_logger::init();
 
-fn main() -> Result<(), slint::PlatformError> {
-    let main_window = MainWindow::new()?;
+    let native_options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([400., 300.])
+            .with_min_inner_size([300., 220.]),
+        ..Default::default()
+    };
 
-    main_window.run()
+    eframe::run_native(
+        "Tapir tracker",
+        native_options,
+        Box::new(|cc| Ok(Box::new(tapir_tracker::App::new(cc)))),
+    )
 }
